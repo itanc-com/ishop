@@ -7,5 +7,6 @@ requires-python = ">=3.13"
 dependencies = [
     "alembic>=1.15.2",
     "fastapi[standard]>=0.115.12",
+    "python-decouple>=3.8",
     "sqlalchemy>=2.0.40",
 ]
