@@ -1,0 +1,11 @@
+[project]
+name = "ishop"
+version = "0.1.0"
+description = "Online Shop Api"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "alembic>=1.15.2",
+    "fastapi[standard]>=0.115.12",
+    "sqlalchemy>=2.0.40",
+]
