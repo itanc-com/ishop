@@ -1,4 +1,3 @@
 fastapi[standard]==0.115.12
 sqlalchemy==2.0.40
-alembic==1.15.2
 python-decouple==3.8
