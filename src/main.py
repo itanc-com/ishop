@@ -1,9 +1,9 @@
 from fastapi import FastAPI
+from src.db.base import Base, engine
+from src.modules.category.models import Category  # noqa
+from src.modules.product.models import Product  # noqa
+from src.modules.user.models import User  # noqa
 
-from category import Category  # noqa
-from db.base import Base, engine
-from product import Product  # noqa
-from user import User  # noqa
 
 app = FastAPI(
     title="IShop API",
