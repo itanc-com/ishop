@@ -1,5 +1,7 @@
 from sqlalchemy.orm import Session
+
 from src.modules.category.models import Category
+
 
 class CategoryRepository:
     def __init__(self, session: Session):

@@ -1,3 +1,5 @@
 fastapi[standard]==0.115.12
 sqlalchemy==2.0.40
 python-decouple==3.8
+pydantic==2.11.3
+python-dotenv==1.1.0

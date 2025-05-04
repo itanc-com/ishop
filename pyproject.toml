@@ -9,11 +9,3 @@ dependencies = [
     "python-decouple>=3.8",
     "sqlalchemy>=2.0.40",
 ]
-
-[tool.uv]
-fastapi-app = "src.main:app"
-fastapi-host = "127.0.0.1"
-fastapi-port = 8080
-
-[tool.uv.env]
-PYTHONPATH = "."

@@ -1,15 +1,14 @@
 from fastapi import FastAPI
+
 from src.db.base import Base, engine
 from src.modules.category.models import Category  # noqa
 from src.modules.product.models import Product  # noqa
 from src.modules.user.models import User  # noqa
 
-
 app = FastAPI(
     title="IShop API",
     description="API for IShop, a headless e-commerce application.",
 )
-
 
 Base.metadata.create_all(bind=engine)
 
