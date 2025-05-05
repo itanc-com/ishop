@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from src.modules.user.models import UserRole, UserStatus
+from app.modules.user.models import UserRole, UserStatus
 
 
 class UserInsert(BaseModel):

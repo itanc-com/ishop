@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-SQLALCHEMY_DATABASE_URL: str = str(config("SQLALCHEMY_DATABASE_URL", default="sqlite:///./src/db/db.sqlite3"))
+SQLALCHEMY_DATABASE_URL: str = str(config("SQLALCHEMY_DATABASE_URL", default="sqlite:///./app/db/db.sqlite3"))
 
 DEBUG: bool = config("DEBUG", default=False, cast=bool)
 DOCS: bool = config("DOCS", default=False, cast=bool)

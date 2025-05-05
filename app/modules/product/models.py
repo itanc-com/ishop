@@ -11,7 +11,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 
-from src.db.base import Base
+from app.db.base import Base
 
 
 class Product(Base):

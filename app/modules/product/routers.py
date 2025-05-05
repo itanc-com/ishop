@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException, status
 from fastapi.params import Depends
 from sqlalchemy.orm import Session
 
-from src.db.session import get_session
+from app.db.session import get_session
 
 from .repository import ProductRepository
 from .schemas import ProductInsert, ProductUpdate, ProductView

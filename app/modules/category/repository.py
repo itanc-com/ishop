@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from src.modules.category.models import Category
+from app.modules.category.models import Category
 
 
 class CategoryRepository:
