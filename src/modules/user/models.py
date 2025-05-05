@@ -13,8 +13,8 @@ class UserRole(Enum):
 class UserStatus(Enum):
     DEACTIVE = 0
     ACTIVE = 1
-    VERIFIED = 3
-    SUSPEND = 4
+    VERIFIED = 2
+    SUSPEND = 3
 
 
 class User(Base):
