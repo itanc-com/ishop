@@ -59,6 +59,12 @@ uv run fastapi dev
 fastapi run
 ```
 
+#### Run on custom port 
+
+```
+uv run fastapi dev --host 0.0.0.0 --port 5001
+```
+
 ### 📋 Requirements
 
 - Python 3.11+
