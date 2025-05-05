@@ -11,9 +11,8 @@ class ProductInsert(BaseModel):
     is_visible: bool = Field(default=False)
 
 
-class ProductUpdate(BaseModel):
-    category_id: int = Field(..., example=1)
-    # ...#complete this model
+class ProductUpdate(ProductInsert):
+    pass
 
 
 # double check this class
