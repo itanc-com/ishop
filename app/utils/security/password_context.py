@@ -1,7 +1,8 @@
 from passlib.context import CryptContext
 
+
 class PasswordContext:
-    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+    pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
     @staticmethod
     def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -17,6 +18,4 @@ class PasswordContext:
 
     @staticmethod
     def verify_and_update(plain_password: str, hashed_password: str) -> tuple | None:
-        return PasswordContext.pwd_context.verify_and_update(
-            plain_password, hashed_password
-        )
+        return PasswordContext.pwd_context.verify_and_update(plain_password, hashed_password)
