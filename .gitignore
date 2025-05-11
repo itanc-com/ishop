@@ -137,6 +137,9 @@ dmypy.json
 # Pycharm
 .idea/
 
+# VSCode
+.vscode/
+
 # draw.io backup files
 .$*.bkp
 $*.drawio.bkp
