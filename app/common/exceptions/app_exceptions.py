@@ -11,8 +11,8 @@ class CredentialsException(BaseException):
         super().__init__(message)
 
 
-class UserEmailAlreadyExistsException(BaseException):
-    """Raised when the email already exists."""
-
-    def __init__(self, message="Email already exists"):
+class DuplicateEntryException(BaseException):
+    def __init__(self, field: str = "Entry", value: str = "", message: str = None):
+        if not message:
+            message = f"{field} '{value}' already exists"
         super().__init__(message)
