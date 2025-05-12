@@ -12,3 +12,13 @@ dependencies = [
     "python-jose>=3.4.0",
     "sqlalchemy>=2.0.40",
 ]
+
+[tool.ruff]
+line-length = 120
+fix = true
+
+[tool.ruff.lint]
+extend-select = ["I", "Q"]
+
+[tool.ruff.format]
+quote-style = "double"
