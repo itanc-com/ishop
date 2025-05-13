@@ -16,7 +16,7 @@ class UserRepository:
         user = User(**data.model_dump())
 
         if self.get_by_email(user.email) is not None:
-            raise DuplicateEntryException("Email", user.email)
+            raise DuplicateEntryException("email", user.email)
 
         self.session.add(user)
         self.session.commit()

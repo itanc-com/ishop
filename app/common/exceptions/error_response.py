@@ -1,0 +1,41 @@
+from datetime import datetime
+from enum import Enum
+from typing import Any
+
+from pydantic import BaseModel
+
+
+class ErrorCodes(str, Enum):
+    DUPLICATE_ENTRY = "DUPLICATE_ENTRY"
+    ITEM_NOT_FOUND = "ITEM_NOT_FOUND"
+    PRODUCT_ALREADY_EXISTS = "PRODUCT_NOT_FOUND"
+    INVALID_CREDENTIALS = "INVALID_CREDENTIALS"
+    PERMISSION_DENIED = "PERMISSION_DENIED"
+    RATE_LIMIT_EXCEEDED = "RATE_LIMIT_EXCEEDED"
+    INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR"
+    UNAUTHORIZED = "UNAUTHORIZED"
+    FORBIDDEN = "FORBIDDEN"
+
+
+class ErrorResponse(BaseModel):
+    """
+    ErrorResponse represents the structure of an error response returned by the API, Inspired by RFC 7807.
+
+    Attributes:
+        code (str): A short string representing the error code.
+        message (str): A detailed description of the error.
+        status (int): The HTTP status code associated with the error.
+        timestamp (datetime): The timestamp when the error occurred.
+        path (str): The request path that caused the error.
+        data (dict[str, Any] | None): Optional additional data related to the error.
+    """
+    code : ErrorCodes
+    message: str
+    status: int
+    timestamp: datetime
+    path: str
+    data : dict[str,Any] | None = None
+    
+ 
+class ErrorResponseWrapper(BaseModel):
+    detail: ErrorResponse
