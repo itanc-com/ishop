@@ -8,7 +8,7 @@ from app.common.http_response.reponses import ResponseError
 from app.db.session import get_session
 
 from .repository import UserRepository
-from .schemas import UserInsert, UserView
+from .schemas import UserCreate, UserRead
 
 router = APIRouter(
     prefix="/users",
@@ -18,14 +18,14 @@ router = APIRouter(
 
 
 @router.post(
-    "/register",
-    response_model=UserView,
+    "/",
+    response_model=UserRead,
     status_code=status.HTTP_201_CREATED,
     responses={
         **ResponseError.HTTP_409_CONFLICT("User already exists"),
     },
 )
-async def register_user(user_register_data: UserInsert, session: Annotated[Session, Depends(get_session)]) -> UserView:
+async def register_user(user_register_data: UserCreate, session: Annotated[Session, Depends(get_session)]) -> UserRead:
         user = UserRepository(session).create(user_register_data)
         return user
    
