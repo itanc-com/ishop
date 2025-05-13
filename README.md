@@ -100,3 +100,17 @@ After installing or upgrading packages, freeze the current environment into requ
 ```
 uv pip freeze > requirements.txt
 ```
+
+
+### ENV File Parameters
+This file contains configuration values used by the application.
+It's typically used to separate environment-specific settings from the application code.
+
+**filename : app/.env**
+
+```
+ENVIRONMENT='DEV' # environment variable permitted: 'DEV', 'PROD', 'TEST' 
+DATABASE_URI="sqlite:///./app/db/db.sqlite3"
+JWT_ISSUER_SERVER="localhost:8000"
+JWT_SECRET_KEY="your_secure_key"
+```
