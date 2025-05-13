@@ -6,10 +6,11 @@ from .models import UserRole, UserStatus
 
 
 class UserBase(BaseModel):
-    first_name: str | None = Field(max_length=255, description="User's first name", examples=["John"])
-    last_name: str | None = Field(max_length=255, description="User's last name", examples=["Doe"])
+    first_name: str | None = Field(None, max_length=255, description="User's first name", examples=["John"])
+    last_name: str | None = Field(None, max_length=255, description="User's last name", examples=["Doe"])
     email: EmailStr = Field(..., description="User's unique email address", examples=["john.doe@example.com"])
     picture: str | None = Field(
+        None,
         description="URL or path to user's profile picture",
         examples=["https://example.com/photos/123.jpg"],
     )
@@ -19,8 +20,8 @@ class UserBase(BaseModel):
         description="Current status of the user account",
         examples=[0],
     )
-    phone: str | None = Field(description="User's phone number", examples=["+1-555-555-0123"])
-    address: str | None = Field(description="User's physical address", examples=["123 Main St, City, Country"])
+    phone: str | None = Field(None, description="User's phone number", examples=["+15555550123"])
+    address: str | None = Field(None, description="User's physical address", examples=["123 Main St, City, Country"])
 
     class Config:
         use_enum_values = True
@@ -36,18 +37,19 @@ class UserCreate(UserBase):
 
 
 class UserUpdate(BaseModel):
-    first_name: str | None = Field(description="Updated first name", examples=["Jane"])
-    last_name: str | None = Field(description="Updated last name", examples=["Smith"])
-    email: EmailStr | None = Field(description="Updated email", examples=["jane.smith@example.com"])
-    password: str | None = Field(min_length=8, description="Updated password", examples=["NewP@ss456"])
+    first_name: str | None = Field(None, description="Updated first name", examples=["Jane"])
+    last_name: str | None = Field(None, description="Updated last name", examples=["Smith"])
+    email: EmailStr | None = Field(None, description="Updated email", examples=["jane.smith@example.com"])
+    password: str | None = Field(None, min_length=8, description="Updated password", examples=["NewP@ss456"])
     picture: str | None = Field(
+        None,
         description="Updated profile picture URL",
         examples=["https://example.com/photos/456.jpg"],
     )
-    role: UserRole | None = Field(description="Updated user role", examples=[1])
-    status: UserStatus | None = Field(description="Updated user status", examples=[1])
-    phone: str | None = Field(description="Updated phone number", examples=["+1-555-555-0456"])
-    address: str | None = Field(description="Updated address", examples=["456 Oak Ave, City, Country"])
+    role: UserRole | None = Field(None, description="Updated user role", examples=[1])
+    status: UserStatus | None = Field(None, description="Updated user status", examples=[1])
+    phone: str | None = Field(None, description="Updated phone number", examples=["+15555550456"])
+    address: str | None = Field(None, description="Updated address", examples=["456 Oak Ave, City, Country"])
 
 
 class UserRead(UserBase):

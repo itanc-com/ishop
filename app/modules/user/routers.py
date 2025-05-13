@@ -25,7 +25,7 @@ router = APIRouter(
         **ResponseError.HTTP_409_CONFLICT("User already exists"),
     },
 )
-async def register_user(user_register_data: UserCreate, session: Annotated[Session, Depends(get_session)]) -> UserRead:
+async def user_register(user_register_data: UserCreate, session: Annotated[Session, Depends(get_session)]) -> UserRead:
         user = UserRepository(session).create(user_register_data)
         return user
    
