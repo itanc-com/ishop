@@ -3,12 +3,14 @@ from typing import Annotated
 from fastapi import APIRouter, HTTPException, status
 from fastapi.params import Depends
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.orm import Session  # noqa: F401
+from sqlalchemy.orm import Session
 
 from app.common.http_response.reponses import ResponseError
-from app.db.session import get_session  # noqa: F401
+from app.db.session import get_session
+from app.modules.user.repository import UserRepository
 
-from .use_cases.create_tokens import CreateTokens
+from .usecase.auth_user_by_email_password import AuthenticateUserByEmailPassword
+from .usecase.create_tokens import CreateTokens
 
 router = APIRouter(
     prefix="/auth",
@@ -31,7 +33,7 @@ router = APIRouter(
 )
 async def auth_get_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    #user_repo: UserRepo = Depends(get_user_repo),
+    session: Annotated[Session, Depends(get_session)]
 ) -> dict | None:
     """
     Authenticate user and provide access token and refresh token.
@@ -43,19 +45,16 @@ async def auth_get_token(
         dict | None: Access token and refresh token if authentication is successful, None otherwise.
     """
     
-    #email = form_data.username
-    #password = form_data.password
+    email = form_data.username
+    password = form_data.password
     
-    # user = await user_repo.authenticate(form_data.username, form_data.password)
-    # if not user:
-    #     raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
-    # return {"access_token": user.access_token, "refresh_token": user.refresh_token}
-    create_tokens = CreateTokens(user_id=3, user_role="user")
+    user = await AuthenticateUserByEmailPassword(session).execute(email, password)
+    
+
+    create_tokens = CreateTokens(user_id=user.id, user_role=user.role)
     tokens = await create_tokens.execute()
-    if tokens:
-        return tokens
-    else:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+    return tokens
+   
     
 
 
