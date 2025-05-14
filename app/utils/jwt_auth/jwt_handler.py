@@ -1,7 +1,9 @@
-from jose import ExpiredSignatureError, jwt, JWTError
-from app.common.exceptions import CredentialsException
 from typing import Any
-from app.utils.jwt_auth.auth_config import JWT_SECRET_KEY, JWT_ISSUER_SERVER, JWT_ALGORITHM
+
+from jose import ExpiredSignatureError, JWTError, jwt
+
+from app.common.exceptions.app_exceptions import CredentialsException
+from app.utils.jwt_auth.auth_config import JWT_ALGORITHM, JWT_ISSUER_SERVER, JWT_SECRET_KEY
 
 
 class JWThandler:
@@ -15,8 +17,8 @@ class JWThandler:
         try:
             return jwt.decode(token, JWT_SECRET_KEY, algorithms=JWT_ALGORITHM, issuer=JWT_ISSUER_SERVER, options={"verify_exp": True})
         except ExpiredSignatureError:
-            raise CredentialsException("EXPIRED TOKEN")
+            raise CredentialsException("EXPIRED TOKEN", credential=token)
         except JWTError:
-            raise CredentialsException("UNVERIFIED SIGNATURE")
+            raise CredentialsException("UNVERIFIED SIGNATURE", credential=token)
 
    
