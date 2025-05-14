@@ -33,11 +33,12 @@ class AppBaseException(Exception):
 class CredentialsException(AppBaseException):
     """Raised when ."""
 
-    def __init__(self, message="Invalid credentials"):
+    def __init__(self, message="Invalid credentials",credential: str = "No token provided"):
         super().__init__(
             code=ErrorCodes.INVALID_CREDENTIALS,
             message=message,
-            status_code=401
+            status_code=401,
+            data={"credential": credential}
         )
 
 
