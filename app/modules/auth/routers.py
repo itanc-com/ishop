@@ -1,12 +1,14 @@
 from typing import Annotated
+
 from fastapi import APIRouter, HTTPException, status
 from fastapi.params import Depends
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session  # noqa: F401
 
 from app.common.http_response.reponses import ResponseError
-from app.db.session import get_session
+from app.db.session import get_session  # noqa: F401
 
+from .use_cases.create_tokens import CreateTokens
 
 router = APIRouter(
     prefix="/auth",
@@ -27,7 +29,7 @@ router = APIRouter(
         **ResponseError.HTTP_401_UNAUTHORIZED("UNAUTHORIZED"),
     },
 )
-async def login_get_token(
+async def auth_get_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     #user_repo: UserRepo = Depends(get_user_repo),
 ) -> dict | None:
@@ -40,8 +42,21 @@ async def login_get_token(
     Returns:
         dict | None: Access token and refresh token if authentication is successful, None otherwise.
     """
+    
+    #email = form_data.username
+    #password = form_data.password
+    
     # user = await user_repo.authenticate(form_data.username, form_data.password)
     # if not user:
     #     raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
     # return {"access_token": user.access_token, "refresh_token": user.refresh_token}
-    pass
+    create_tokens = CreateTokens(user_id=3, user_role="user")
+    tokens = await create_tokens.execute()
+    if tokens:
+        return tokens
+    else:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+    
+
+
+    
