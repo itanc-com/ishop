@@ -1,14 +1,14 @@
 from app.common.exceptions.app_exceptions import InvalidPayloadException
 from app.modules.auth.schemas import JWTPayload, TokenType
-from app.modules.user.models import UserRole
 from app.utils.jwt_auth.auth_config import ACCESS_TOKEN_EXPIRE, JWT_ISSUER_SERVER, REFRESH_TOKEN_EXPIRE
 from app.utils.jwt_auth.jwt_handler import JWThandler
 
 
 class CreateTokens:
-    def __init__(self, user_id: int, user_role: int) -> None:
-        self.sub = str(user_id)
-        self.role = UserRole(user_role).name.lower()  #! not sure it should be convert here
+    def __init__(self, user_id: str, user_role: str) -> None:
+        self.sub = user_id
+        self.role = user_role
+
 
     async def execute(self) -> dict | None:
         # * create access-token
