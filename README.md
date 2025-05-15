@@ -1,6 +1,6 @@
-# iShop – Online Shop API
+# iShop – E-commerce API with FastAPI Framework
 
-A simple and lightweight eCommerce API built with FastAPI to manage online sales and inventory.
+## A simple and lightweight e-commerce API built with FastAPI for managing online sales and inventory.
 
 ---
 
@@ -10,6 +10,8 @@ A simple and lightweight eCommerce API built with FastAPI to manage online sales
 - Cart and order handling  
 - Simple and extensible architecture  
 - Suitable for small-scale eCommerce projects  
+
+[🗂️ View iShop Database Diagram on dbdiagram.io](https://dbdiagram.io/d/iShop-68252d1f5b2fc4582fa8803d)
 
 ---
 
