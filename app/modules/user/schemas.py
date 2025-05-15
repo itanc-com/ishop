@@ -54,6 +54,7 @@ class UserUpdate(BaseModel):
 
 class UserRead(UserBase):
     id: int = Field(..., description="Unique ID of the user", examples=[1])
+
     date_created: datetime = Field(
         ...,
         description="Timestamp when the user was created",
