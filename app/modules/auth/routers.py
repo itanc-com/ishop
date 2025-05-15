@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.common.http_response.reponses import ResponseError
 from app.db.session import get_session
+from app.modules.user.models import UserRole
 from app.modules.user.repository import UserRepository
 
 from .usecase.auth_user_by_email_password import AuthenticateUserByEmailPassword
@@ -50,8 +51,9 @@ async def auth_get_token(
     
     user = await AuthenticateUserByEmailPassword(session).execute(email, password)
     
+    user_role = str(UserRole(user.role).name.lower())
 
-    create_tokens = CreateTokens(user_id=user.id, user_role=user.role)
+    create_tokens = CreateTokens(user_id=str(user.id), user_role=user_role)
     tokens = await create_tokens.execute()
     return tokens
    
