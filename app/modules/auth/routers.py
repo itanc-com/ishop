@@ -32,8 +32,7 @@ router = APIRouter(
     },
 )
 async def auth_get_token(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    session: Annotated[Session, Depends(get_session)]
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()], session: Annotated[Session, Depends(get_session)]
 ) -> dict | None:
     """
     Authenticate user and provide access token and refresh token.
@@ -44,18 +43,12 @@ async def auth_get_token(
     Returns:
         dict | None: Access token and refresh token if authentication is successful, None otherwise.
     """
-    
+
     email = form_data.username
     password = form_data.password
-    
+
     user = await AuthenticateUserByEmailPassword(session).execute(email, password)
-    
 
     create_tokens = CreateTokens(user_id=user.id, user_role=user.role)
     tokens = await create_tokens.execute()
     return tokens
-   
-    
-
-
-    

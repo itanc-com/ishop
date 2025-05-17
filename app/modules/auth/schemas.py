@@ -7,7 +7,7 @@ from pydantic import BaseModel
 class TokenType(str, Enum):
     access = "access"
     refresh = "refresh"
-    
+
 
 class JWTPayload(BaseModel):
     """
@@ -21,22 +21,30 @@ class JWTPayload(BaseModel):
         iat (int): Issued At – The Unix timestamp indicating when the token was created.
         exp (int): Expiration – The Unix timestamp indicating when the token will expire.
         role (str): The role of the token subject (e.g., "user", "admin"). Defaults to "user".
-    
+
     Notes:
         - `sub` should be set to a stable identifier like the user ID (as string).
         - `iat` and `exp` are Unix timestamps in seconds.
         - `typ` is recommended to distinguish between access and refresh tokens.
         - Do not include sensitive information like email or full name in the token payload.
     """
-    iss: str | None = None   
+
+    iss: str | None = None
     typ: str
     sub: str
     iat: int = 0
-    exp: int = 0  
+    exp: int = 0
     role: str = "user"
 
     @classmethod
-    def create(cls, sub: int | str, role: str = "user", expire_in: int = 3600, token_type: TokenType = TokenType.access, issuer: str | None = "auth") -> "JWTPayload":
+    def create(
+        cls,
+        sub: int | str,
+        role: str = "user",
+        expire_in: int = 3600,
+        token_type: TokenType = TokenType.access,
+        issuer: str | None = "auth",
+    ) -> "JWTPayload":
         """
         Factory method to generate a JWT payload with default `iat` and computed `exp`.
 
@@ -52,11 +60,4 @@ class JWTPayload(BaseModel):
         """
         iat = int(time.time())
         exp = iat + expire_in
-        return cls(
-            iss=issuer,
-            typ=token_type,
-            sub=str(sub),
-            iat=iat,
-            exp=exp,
-            role=role
-        )
+        return cls(iss=issuer, typ=token_type, sub=str(sub), iat=iat, exp=exp, role=role)
