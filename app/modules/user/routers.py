@@ -6,9 +6,9 @@ from sqlalchemy.orm import Session
 
 from app.common.http_response.reponses import ResponseError, ResponseSuccess
 from app.common.http_response.success_response import SuccessCodes, SuccessResponse
-from app.common.http_response.success_result import SuccessResult, success_response
 from app.db.session import get_session
 
+from ...common.http_response.success_result import SuccessResult, success_response
 from .repository import UserRepository
 from .schemas import UserCreate, UserRead
 
@@ -30,7 +30,7 @@ router = APIRouter(
 )
 async def user_register(
     request: Request, user_register_data: UserCreate, session: Annotated[Session, Depends(get_session)]
-) -> UserRead:
+) -> SuccessResponse[UserRead]:
     user = UserRepository(session).create(user_register_data)
     result = SuccessResult[UserRead](
         code=SuccessCodes.CREATED,
