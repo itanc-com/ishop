@@ -6,9 +6,9 @@ from sqlalchemy.orm import Session
 
 from app.common.http_response.reponses import ResponseError, ResponseSuccess
 from app.common.http_response.success_response import SuccessCodes, SuccessResponse
+from app.common.http_response.success_result import SuccessResult, success_response
 from app.db.session import get_session
 
-from ...common.http_response.success_result import SuccessResult, success_response
 from .repository import UserRepository
 from .schemas import UserCreate, UserRead
 
