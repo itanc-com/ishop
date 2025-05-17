@@ -1,8 +1,9 @@
-from datetime import datetime
 from enum import Enum
 from typing import Any
 
 from pydantic import BaseModel
+
+from .base import BaseResponse
 
 
 class ErrorCodes(str, Enum):
@@ -20,7 +21,7 @@ class ErrorCodes(str, Enum):
     FORBIDDEN = "FORBIDDEN"
 
 
-class ErrorResponse(BaseModel):
+class ErrorResponse(BaseResponse):
     """
     ErrorResponse represents the structure of an error response returned by the API, Inspired by RFC 7807.
 
@@ -32,13 +33,10 @@ class ErrorResponse(BaseModel):
         path (str): The request path that caused the error.
         data (dict[str, Any] | None): Optional additional data related to the error.
     """
-    code : ErrorCodes
-    message: str
-    status: int
-    timestamp: datetime
-    path: str
-    data : dict[str,Any] | None = None
-    
- 
+
+    code: ErrorCodes
+    data: dict[str, Any] | None = None
+
+
 class ErrorResponseWrapper(BaseModel):
     detail: ErrorResponse
