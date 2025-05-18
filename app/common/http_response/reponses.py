@@ -1,29 +1,34 @@
 from typing import Any
 
-from ..exceptions.error_response import ErrorResponseWrapper
+from pydantic import BaseModel
+
+from .error_response import ErrorResponseWrapper
+from .success_response import SuccessResponse
 
 
-class ResponseError:
+class ResponseSuccess:
     @staticmethod
     def HTTP_200_OK(description: str) -> dict:
-        return {200: {"model": ErrorResponseWrapper, "description": description}}
+        return {200: {"model": SuccessResponse, "description": description}}
 
     @staticmethod
-    def HTTP_201_CREATED(description: str) -> dict:
-        return {201: {"model": ErrorResponseWrapper, "description": description}}
+    def HTTP_201_CREATED(description: str, response_type: type[BaseModel]) -> dict:
+        return {201: {"model": SuccessResponse[response_type], "description": description}}
 
     @staticmethod
     def HTTP_202_ACCEPTED(description: str) -> dict:
-        return {202: {"model": ErrorResponseWrapper, "description": description}}
+        return {202: {"model": SuccessResponse, "description": description}}
 
     @staticmethod
     def HTTP_203_NON_AUTHORITATIVE_INFORMATION(description: str) -> dict:
-        return {203: {"model": ErrorResponseWrapper, "description": description}}
+        return {203: {"model": SuccessResponse, "description": description}}
 
     @staticmethod
     def HTTP_204_NO_CONTENT(description: str, headers: dict[str, Any]) -> dict:
         return {204: {"description": description, "headers": headers}}
 
+
+class ResponseError:
     @staticmethod
     def HTTP_400_BAD_REQUEST(description: str) -> dict:
         return {400: {"model": ErrorResponseWrapper, "description": description}}

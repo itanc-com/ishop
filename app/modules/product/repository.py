@@ -8,7 +8,7 @@ class ProductRepository:
     def __init__(self, session: Session):
         self.session = session
 
-    def create(self, data: ProductInsert)-> Product:
+    def create(self, data: ProductInsert) -> Product:
         product = Product(**data.model_dump())
         self.session.add(product)
         self.session.commit()
