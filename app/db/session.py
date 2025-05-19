@@ -1,10 +1,23 @@
-from typing import Generator
+from typing import AsyncGenerator
 
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from .base import SessionLocal
+from app.common.pydantic.settings import settings
 
+from .database_session_manager import DatabaseSessionManager
 
-def get_session() -> Generator[Session, None, None]:
-    with SessionLocal() as session:
+if settings.environment != "production":
+    settings.echo_sql = True
+
+engine_options = {
+    "echo": settings.echo_sql,
+    "connect_args": {"check_same_thread": False}
+    if settings.database_url.startswith("sqlite")
+    else {}
+}
+
+sessionmanager = DatabaseSessionManager(settings.database_url, engine_options)
+
+async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
+    async with sessionmanager.session() as session:
         yield session

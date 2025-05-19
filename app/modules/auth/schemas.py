@@ -61,3 +61,10 @@ class JWTPayload(BaseModel):
         iat = int(time.time())
         exp = iat + expire_in
         return cls(iss=issuer, typ=token_type, sub=str(sub), iat=iat, exp=exp, role=role)
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    refresh_token: str
+    access_token_expire_in: int
+    refresh_token_expire_in: int

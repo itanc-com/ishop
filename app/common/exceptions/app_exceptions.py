@@ -47,9 +47,29 @@ class DuplicateEntryException(AppBaseException):
             data={field: value},
         )
 
+class EntityNotFoundException(AppBaseException):
+    def __init__(self, data: dict, message: str = "Entity not found"):
+        super().__init__(
+            code=ErrorCodes.ENTITY_NOT_FOUND,
+            message=message,
+            status_code=404,
+            data=data,
+        )
+
 
 class InvalidCredentialsException(AppBaseException):
     def __init__(self, data=None, message: str = "Authentication failed"):
         if data is None:
             data = {}
         super().__init__(code=ErrorCodes.INVALID_CREDENTIALS, message=message, status_code=401, data=data)
+
+class DatabaseOperationException(AppBaseException):
+    def __init__(self,operation: str | None = None, message: str | None = None, data: dict | None = None):
+        message = f"Failed to perform {operation} operation."
+
+        super().__init__(
+            code=ErrorCodes.DATABASE_ERROR,
+            message=message,
+            status_code=500,
+            data= data,
+        )
