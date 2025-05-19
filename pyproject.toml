@@ -15,6 +15,18 @@ dependencies = [
     "sqlalchemy>=2.0.40",
 ]
 
+
+[tool.uv]
+dev-dependencies = [
+    "ruff==0.11.10",
+    "pre-commit>=4.2.0",
+    "pytest>=8.3.5",
+    "pytest-asyncio==0.23.5",
+    "faker>=37.3.0",
+    "pytest-order>=1.3.0",
+    "playwright>=1.52.0",
+]
+
 [tool.ruff]
 line-length = 120
 fix = true
