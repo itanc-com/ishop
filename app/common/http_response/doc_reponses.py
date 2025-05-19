@@ -6,7 +6,7 @@ from .error_response import ErrorResponseWrapper
 from .success_response import SuccessResponse
 
 
-class ResponseSuccess:
+class ResponseSuccessDoc:
     @staticmethod
     def HTTP_200_OK(description: str) -> dict:
         return {200: {"model": SuccessResponse, "description": description}}
@@ -28,7 +28,7 @@ class ResponseSuccess:
         return {204: {"description": description, "headers": headers}}
 
 
-class ResponseError:
+class ResponseErrorDoc:
     @staticmethod
     def HTTP_400_BAD_REQUEST(description: str) -> dict:
         return {400: {"model": ErrorResponseWrapper, "description": description}}

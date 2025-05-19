@@ -1,5 +1,5 @@
 from app.common.exceptions.app_exceptions import InvalidPayloadException
-from app.modules.auth.schemas import JWTPayload, TokenType
+from app.modules.auth.schemas import JWTPayload, TokenResponse, TokenType
 from app.utils.jwt_auth.auth_config import ACCESS_TOKEN_EXPIRE, JWT_ISSUER_SERVER, REFRESH_TOKEN_EXPIRE
 from app.utils.jwt_auth.jwt_handler import JWThandler
 
@@ -10,7 +10,7 @@ class CreateTokens:
         self.role = user_role
 
 
-    async def execute(self) -> dict | None:
+    async def execute(self) -> TokenResponse | None:
         # * create access-token
         pyaload_access_token: JWTPayload = JWTPayload.create(
             sub=str(self.sub),
@@ -42,10 +42,11 @@ class CreateTokens:
             raise InvalidPayloadException(
                 message=f"Failed to create refresh token, {e}", payload=refresh_token.model_dump()
             ) from e
-
-        return {
-            "access_token": access_token,
-            "refresh_token": refresh_token,
-            "access_token_expire_in": ACCESS_TOKEN_EXPIRE,
-            "refresh_token_expire_in": REFRESH_TOKEN_EXPIRE,
-        }
+  
+        return TokenResponse(
+            access_token=access_token,
+            refresh_token=refresh_token,
+            access_token_expire_in=ACCESS_TOKEN_EXPIRE,
+            refresh_token_expire_in=REFRESH_TOKEN_EXPIRE,
+        )
+        

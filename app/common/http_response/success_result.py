@@ -35,7 +35,7 @@ class SuccessResult(Generic[T]):
         )
 
 
-def success_response(result: SuccessResult[T], request: Request) -> JSONResponse:
+def success_response_builder(result: SuccessResult[T], request: Request) -> JSONResponse:
     model = result.to_response_model(path=request.url.path)
     return JSONResponse(
         status_code=result.status_code,
