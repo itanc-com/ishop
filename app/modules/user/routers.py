@@ -10,7 +10,7 @@ from app.common.http_response.success_result import SuccessResult, success_respo
 
 from .repository_interface import UserRepositoryInterface
 from .schemas import UserCreate, UserRead
-from .usecase.user_register import UserRegister
+from .usecases.user_register import UserRegister
 
 router = APIRouter(
     prefix="/users",

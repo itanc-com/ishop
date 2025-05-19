@@ -12,8 +12,8 @@ from app.modules.user.models import UserRole
 from app.modules.user.repository_interface import UserRepositoryInterface
 
 from .schemas import TokenResponse
-from .usecase.auth_user_by_email_password import AuthenticateUserByEmailPassword
-from .usecase.create_tokens import CreateTokens
+from .usecases.auth_user_by_email_password import AuthenticateUserByEmailPassword
+from .usecases.create_tokens import CreateTokens
 
 router = APIRouter(
     prefix="/auth",
