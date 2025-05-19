@@ -1,28 +1,30 @@
-from sqlalchemy.orm import Session
-
-from app.common.exceptions.app_exceptions import DuplicateEntryException
-from app.utils.security.password_context import PasswordContext
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from .models import User
-from .schemas import UserCreate
+from .repository_interface import UserRepositoryInterface
 
 
-class UserRepository:
-    def __init__(self, session: Session):
+class UserRepository(UserRepositoryInterface):
+    def __init__(self, session: AsyncSession):
         self.session = session
 
-    def create(self, data: UserCreate) -> User:
-        data.password = PasswordContext.hash_password(data.password)
-
-        if self.get_by_email(data.email) is not None:
-            raise DuplicateEntryException("email", data.email)
-
-        user = User(**data.model_dump())
+    async def insert(self, user: User) -> User:
+        
         self.session.add(user)
-        self.session.commit()
-        self.session.refresh(user)
-
+        await self.session.commit() 
+        await self.session.refresh(user)   
         return user
 
-    def get_by_email(self, email: str) -> User | None:
-        return self.session.query(User).filter(User.email == email).first()
+    
+    async def email_exists(self, email: str) -> bool:
+        query = select(1).where(User.email == email).limit(1)
+        result = await self.session.execute(query)
+        return result.scalar_one_or_none() is not None   
+
+    async def get_by_email(self, email: str) -> User | None:
+        query = select(User).where(User.email == email)
+        result = await self.session.execute(query)
+        return result.scalar_one_or_none()
+
+    

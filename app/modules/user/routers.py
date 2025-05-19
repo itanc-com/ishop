@@ -2,15 +2,15 @@ from typing import Annotated
 
 from fastapi import APIRouter, Request, status
 from fastapi.params import Depends
-from sqlalchemy.orm import Session
 
+from app.common.fastapi.depends import get_user_repository
 from app.common.http_response.reponses import ResponseError, ResponseSuccess
 from app.common.http_response.success_response import SuccessCodes, SuccessResponse
 from app.common.http_response.success_result import SuccessResult, success_response
-from app.db.session import get_session
 
-from .repository import UserRepository
+from .repository_interface import UserRepositoryInterface
 from .schemas import UserCreate, UserRead
+from .usecase.user_register import UserRegister
 
 router = APIRouter(
     prefix="/users",
@@ -29,13 +29,22 @@ router = APIRouter(
     },
 )
 async def user_register(
-    request: Request, user_register_data: UserCreate, session: Annotated[Session, Depends(get_session)]
+    request: Request,
+    user_schema: UserCreate,
+    user_repository: Annotated[UserRepositoryInterface, Depends(get_user_repository)],
 ) -> SuccessResponse[UserRead]:
-    user = UserRepository(session).create(user_register_data)
+   
+
+    user_register = UserRegister(user_repository)
+    
+    user_read = await user_register.execute(user_schema)
+ 
     result = SuccessResult[UserRead](
-        code=SuccessCodes.CREATED,
-        message="User created successfully",
-        status_code=status.HTTP_201_CREATED,
-        data=UserRead.model_validate(user),
-    )
+            code=SuccessCodes.CREATED,
+            message="User created successfully",
+            status_code=status.HTTP_201_CREATED,
+            data=user_read,
+        )
+        
     return success_response(result, request)
+

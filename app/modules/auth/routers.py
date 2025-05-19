@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from app.common.http_response.reponses import ResponseError
-from app.db.session import get_session
+from app.db.session import get_db_session
 from app.modules.user.models import UserRole
 from app.modules.user.repository import UserRepository
 
@@ -33,7 +33,7 @@ router = APIRouter(
     },
 )
 async def auth_get_token(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()], session: Annotated[Session, Depends(get_session)]
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()], session: Annotated[Session, Depends(get_db_session)]
 ) -> dict | None:
     """
     Authenticate user and provide access token and refresh token.
