@@ -65,7 +65,7 @@ class InvalidCredentialsException(AppBaseException):
 
 class DatabaseOperationException(AppBaseException):
     def __init__(self,operation: str | None = None, message: str | None = None, data: dict | None = None):
-        message = f"Failed to perform {operation} operation."
+        message = f"Failed to perform {operation} operation. {message} "
 
         super().__init__(
             code=ErrorCodes.DATABASE_ERROR,
