@@ -1,33 +1,53 @@
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from .models import Product
-from .schemas import ProductInsert, ProductUpdate
 
 
 class ProductRepository:
-    def __init__(self, session: Session):
+    def __init__(self, session: AsyncSession):
         self.session = session
 
-    def create(self, data: ProductInsert) -> Product:
-        product = Product(**data.model_dump())
+    async def create(self, product: Product) -> Product:
         self.session.add(product)
-        self.session.commit()
-        self.session.refresh(product)
+        await self.session.commit()
+        await self.session.refresh(product)
+
         return product
 
-    def get_by_id(self, product_id: int) -> Product | None:
-        return self.session.query(Product).filter(Product.id == product_id).first()
+    async def update(self, product_id: int, updated_product: Product) -> Product | None:
+        product = await self.session.get(Product, product_id)
+        if not product:
+            return None
 
-    def list_all(self) -> list[Product]:
-        return self.session.query(Product).all()
+        for attr, value in vars(updated_product).items():
+            if attr != "id" and hasattr(product, attr):
+                setattr(product, attr, value)
 
-    def delete(self, product: Product) -> None:
-        self.session.delete(product)
-        self.session.commit()
-
-    def update(self, product: Product, data: ProductUpdate) -> Product:
-        for key, value in vars(data).items():
-            setattr(product, key, value)
-        self.session.commit()
-        self.session.refresh(product)
+        await self.session.commit()
+        await self.session.refresh(product)
         return product
+
+    async def delete(self, product_id: int) -> Product | None:
+        product = await self.session.get(Product, product_id)
+
+        if not product:
+            return None
+
+        await self.session.delete(product)
+        await self.session.commit()
+        return product
+
+    async def get_by_id(self, product_id: int) -> Product | None:
+        return await self.session.get(Product, product_id)
+
+    async def list_all(self, category_id: int | None = None, skip: int = 0, limit: int = 10) -> list[Product]:
+        query = select(Product)
+
+        if category_id is not None:
+            query = query.where(Product.category_id == category_id)
+
+        query = query.offset(skip).limit(limit)
+
+        result = await self.session.execute(query)
+        return result.scalars().all()

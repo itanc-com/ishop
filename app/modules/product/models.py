@@ -25,7 +25,7 @@ class Product(Base):
     is_available = Column(Boolean, default=False)
     price = Column(Numeric(15, 2), nullable=False)
     is_visible = Column(Boolean, default=False)
-    date_created = Column(DateTime, default=func.now())
-    date_modified = Column(DateTime, default=func.now(), onupdate=func.now())
+    date_created = Column(DateTime, default=func.now(), nullable=False)
+    date_modified = Column(DateTime, default=func.now(), onupdate=func.now(), nullable=False)
 
     category = relationship("Category", backref="products")
