@@ -1,5 +1,6 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request  # noqa: I001
 from fastapi.responses import JSONResponse
+# from fastapi.responses import ORJSONResponse
 
 from app.common.exceptions.app_exceptions import AppBaseException
 from app.common.fastapi.lifespan import lifespan
@@ -13,7 +14,9 @@ from app.modules.user.routers import router as user_router
 app = FastAPI(
     title="IShop API",
     description="API for IShop, a headless e-commerce application.",
-    lifespan= lifespan,
+    lifespan=lifespan,
+    #! need all json respose chnage to  ORJSONResponse
+    # default_response_class=ORJSONResponse # type: ignore
 )
 
 
@@ -25,7 +28,7 @@ async def root() -> dict:
 app.include_router(products_router)
 app.include_router(auth_router)
 app.include_router(user_router)
- 
+
 
 @app.exception_handler(AppBaseException)
 async def handle_app_exception(request: Request, exc: AppBaseException):
