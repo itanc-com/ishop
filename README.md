@@ -6,10 +6,10 @@
 
 ## 🚀 Features
 
-- Product listing and management  
-- Cart and order handling  
-- Simple and extensible architecture  
-- Suitable for small-scale eCommerce projects  
+- Product listing and management
+- Cart and order handling
+- Simple and extensible architecture
+- Suitable for small-scale eCommerce projects
 
 [🗂️ View iShop Database Diagram on dbdiagram.io](https://dbdiagram.io/d/iShop-68252d1f5b2fc4582fa8803d)
 
@@ -37,7 +37,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Setup Environment 
+## Setup Environment
 
 
 ## Running the App
@@ -50,7 +50,7 @@ python3 run.py
 ```
 ### ✅ Option 2: Use FastAPI CLI
 
-#### Development Mode 
+#### Development Mode
 ```
 uv run fastapi dev
 ```
@@ -61,7 +61,7 @@ uv run fastapi dev
 fastapi run
 ```
 
-#### Run on custom port 
+#### Run on custom port
 
 ```
 uv run fastapi dev --host 0.0.0.0 --port 5001
@@ -94,6 +94,16 @@ uv pip install httpx
 This automatically updates your virtual environment and makes the package available in the project.
 
 
+#### ➕ Install pre-commit
+
+```
+pre-commit install
+```
+
+check all files before commit
+```
+pre-commit run --all-files
+```
 
 #### 📦 Update requirements.txt
 
@@ -111,7 +121,7 @@ It's typically used to separate environment-specific settings from the applicati
 **filename : app/.env**
 
 ```
-ENVIRONMENT='DEV' # environment variable permitted: 'DEV', 'PROD', 'TEST' 
+ENVIRONMENT='DEV' # environment variable permitted: 'DEV', 'PROD', 'TEST'
 DATABASE_URI="sqlite:///./app/db/db.sqlite3"
 JWT_ISSUER_SERVER="localhost:8000"
 JWT_SECRET_KEY="your_secure_key"
