@@ -88,7 +88,7 @@ async def auth_get_token(
         **ResponseErrorDoc.HTTP_401_UNAUTHORIZED("Invalid credentials"),
     },
 )
-async def swagger_token(
+async def auth_swagger_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
     user_repo: UserRepositoryInterface = Depends(get_user_repository),
 ):
@@ -142,3 +142,66 @@ async def auth_get_me(
         data=user,
     )
     return success_response_builder(result, request)
+
+
+@router.post(
+    "/token/refresh",
+    description="Refresh tokens using refresh token",
+    response_model=SuccessResponse[TokenResponse],
+    status_code=status.HTTP_200_OK,
+    responses={
+        **ResponseSuccessDoc.HTTP_200_OK("Tokens refreshed successfully", TokenResponse),
+        **ResponseErrorDoc.HTTP_500_INTERNAL_SERVER_ERROR("Operation Failure"),
+        **ResponseErrorDoc.HTTP_404_NOT_FOUND("Entity not found"),
+        **ResponseErrorDoc.HTTP_403_FORBIDDEN("UNACCESSIBLE"),
+        **ResponseErrorDoc.HTTP_401_UNAUTHORIZED("Invalid credentials"),
+    },
+)
+async def auth_refresh_tokens(
+    request: Request,
+    refresh_token: str,
+    user: Annotated[UserRead, Depends(get_current_authenticated_user)],
+    user_repository: Annotated[UserRepositoryInterface, Depends(get_user_repository)],
+) -> SuccessResponse[TokenResponse]:
+    """
+    Refresh tokens using refresh token.
+    This endpoint allows the user to refresh their access and refresh tokens.
+    Args:
+        request (Request): The FastAPI request object.
+        user (UserRead): The authenticated user object.
+        user_repository (UserRepositoryInterface): User repository dependency.
+    Returns:
+        SuccessResponse[TokenResponse]: A success response containing the new tokens.
+    """
+    pass
+
+
+@router.get(
+    "/token/refresh/verify",
+    description="Verify refresh token",
+    response_model=SuccessResponse[TokenResponse],
+    responses={
+        **ResponseSuccessDoc.HTTP_200_OK("Refresh token verified successfully", TokenResponse),
+        **ResponseErrorDoc.HTTP_500_INTERNAL_SERVER_ERROR("Operation Failure"),
+        **ResponseErrorDoc.HTTP_404_NOT_FOUND("Entity not found"),
+        **ResponseErrorDoc.HTTP_403_FORBIDDEN("UNACCESSIBLE"),
+        **ResponseErrorDoc.HTTP_401_UNAUTHORIZED("Invalid credentials"),
+    },
+)
+async def auth_verify_refresh_token(
+    request: Request,
+    refresh_token: str,
+    user: Annotated[UserRead, Depends(get_current_authenticated_user)],
+    user_repository: Annotated[UserRepositoryInterface, Depends(get_user_repository)],
+) -> SuccessResponse[TokenResponse]:
+    """
+    Verify refresh token.
+    This endpoint allows the user to verify their refresh token.
+    Args:
+        request (Request): The FastAPI request object.
+        user (UserRead): The authenticated user object.
+        user_repository (UserRepositoryInterface): User repository dependency.
+    Returns:
+        SuccessResponse[TokenResponse]: A success response containing the verified tokens.
+    """
+    pass
