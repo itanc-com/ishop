@@ -1,10 +1,10 @@
 import time
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel
 
 
-class TokenType(str, Enum):
+class TokenType(StrEnum):
     access = "access"
     refresh = "refresh"
 

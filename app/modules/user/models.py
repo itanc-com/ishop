@@ -1,16 +1,16 @@
-from enum import Enum
+from enum import Enum, IntEnum
 
 from sqlalchemy import Column, DateTime, Integer, String, Text, func
 
 from app.db.base import Base
 
 
-class UserRole(Enum):
+class UserRole(IntEnum):
     USER = 0
     ADMIN = 1
 
 
-class UserStatus(Enum):
+class UserStatus(IntEnum):
     DEACTIVE = 0
     ACTIVE = 1
     VERIFIED = 2

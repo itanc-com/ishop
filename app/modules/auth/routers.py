@@ -13,9 +13,13 @@ from app.modules.user.repository_interface import UserRepositoryInterface
 from app.modules.user.schemas import UserRead
 
 from .depends import get_current_authenticated_user
-from .schemas import OAuth2TokenResponse, TokenResponse
+from .schemas import JWTPayload, OAuth2TokenResponse, TokenResponse, TokenType
 from .usecases.auth_user_by_email_password import AuthenticateUserByEmailPassword
 from .usecases.create_tokens import CreateTokens
+from .usecases.verify_token_payload import VerifyTokenPayload
+from .usecases.read_jwt_token import ReadJwtToken
+
+
 
 router = APIRouter(
     prefix="/auth",
@@ -160,7 +164,6 @@ async def auth_get_me(
 async def auth_refresh_tokens(
     request: Request,
     refresh_token: str,
-    user: Annotated[UserRead, Depends(get_current_authenticated_user)],
     user_repository: Annotated[UserRepositoryInterface, Depends(get_user_repository)],
 ) -> SuccessResponse[TokenResponse]:
     """
@@ -173,8 +176,20 @@ async def auth_refresh_tokens(
     Returns:
         SuccessResponse[TokenResponse]: A success response containing the new tokens.
     """
-    pass
+    payload: JWTPayload = await ReadJwtToken(refresh_token).execute()
 
+    user = await VerifyTokenPayload(user_repository).execute(payload,TokenType.refresh)
+    user_role = str(UserRole(user.role).name.lower())
+
+    tokens = await CreateTokens(user_id=str(user.id), user_role=user_role).execute()
+    result = SuccessResult[TokenResponse](
+        code=SuccessCodes.CREATED,
+        message="Tokens created successfully",
+        status_code=status.HTTP_201_CREATED,
+        data=tokens,
+    )
+
+    return success_response_builder(result, request)
 
 @router.get(
     "/token/refresh/verify",
