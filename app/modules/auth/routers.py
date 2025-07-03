@@ -192,11 +192,11 @@ async def auth_refresh_tokens(
     return success_response_builder(result, request)
 
 @router.get(
-    "/token/refresh/verify",
-    description="Verify refresh token",
+    "/token/verify",
+    description="Verify access token",
     response_model=SuccessResponse[TokenResponse],
     responses={
-        **ResponseSuccessDoc.HTTP_200_OK("Refresh token verified successfully", TokenResponse),
+        **ResponseSuccessDoc.HTTP_200_OK("access token verified successfully", TokenResponse),
         **ResponseErrorDoc.HTTP_500_INTERNAL_SERVER_ERROR("Operation Failure"),
         **ResponseErrorDoc.HTTP_404_NOT_FOUND("Entity not found"),
         **ResponseErrorDoc.HTTP_403_FORBIDDEN("UNACCESSIBLE"),
@@ -205,13 +205,12 @@ async def auth_refresh_tokens(
 )
 async def auth_verify_refresh_token(
     request: Request,
-    refresh_token: str,
-    user: Annotated[UserRead, Depends(get_current_authenticated_user)],
+    access_token: str,
     user_repository: Annotated[UserRepositoryInterface, Depends(get_user_repository)],
 ) -> SuccessResponse[TokenResponse]:
     """
-    Verify refresh token.
-    This endpoint allows the user to verify their refresh token.
+    Verify access token.
+    This endpoint allows the user to verify their access token.
     Args:
         request (Request): The FastAPI request object.
         user (UserRead): The authenticated user object.
@@ -219,4 +218,17 @@ async def auth_verify_refresh_token(
     Returns:
         SuccessResponse[TokenResponse]: A success response containing the verified tokens.
     """
-    pass
+    payload: JWTPayload = await ReadJwtToken(access_token).execute()
+
+    user_read = await VerifyTokenPayload(user_repository).execute(payload,TokenType.access)
+
+    result = SuccessResult[UserRead](
+            code=SuccessCodes.SUCCESS,
+            message="User is valid",
+            status_code=status.HTTP_200_OK,
+            data=user_read,
+        )
+        
+    return success_response_builder(result, request)
+
+

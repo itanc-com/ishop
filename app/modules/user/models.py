@@ -1,4 +1,4 @@
-from enum import Enum, IntEnum
+from enum import IntEnum
 
 from sqlalchemy import Column, DateTime, Integer, String, Text, func
 
