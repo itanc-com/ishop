@@ -1,10 +1,10 @@
 import time
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel
 
 
-class TokenType(str, Enum):
+class TokenType(StrEnum):
     access = "access"
     refresh = "refresh"
 
@@ -68,3 +68,8 @@ class TokenResponse(BaseModel):
     refresh_token: str
     access_token_expire_in: int
     refresh_token_expire_in: int
+
+
+class OAuth2TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"

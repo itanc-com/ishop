@@ -3,6 +3,7 @@ from app.common.exceptions.app_exceptions import (
     EntityNotFoundException,
     InvalidCredentialsException,
 )
+from app.modules.user.models import User
 from app.modules.user.repository_interface import UserRepositoryInterface
 from app.modules.user.schemas import UserRead
 from app.utils.security.password_context import PasswordContext
@@ -15,7 +16,7 @@ class AuthenticateUserByEmailPassword:
     async def execute(self, email: str, raw_password: str) -> UserRead:
         
         try:
-            user = await self.user_repository.get_by_email(email)
+            user: User = await self.user_repository.get_by_email(email)
         except Exception as e:
             raise DatabaseOperationException(
                 operation="select",
@@ -28,7 +29,7 @@ class AuthenticateUserByEmailPassword:
                 data={"email": email},
             )
 
-        if not user or not PasswordContext.verify_password(raw_password, user.password):
+        if not PasswordContext.verify_password(raw_password, user.password):
             raise InvalidCredentialsException(
                 data={"email": email},
                 message="Invalid credentials",

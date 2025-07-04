@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import   StrEnum
 from typing import Generic, TypeVar
 
 from pydantic import BaseModel
@@ -8,7 +8,7 @@ from .base import BaseResponse
 T = TypeVar("T", bound=BaseModel)
 
 
-class SuccessCodes(str, Enum):
+class SuccessCodes(StrEnum):
     """Enum for success codes."""
 
     SUCCESS = "SUCCESS"  # 200

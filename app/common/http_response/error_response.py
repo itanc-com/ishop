@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel
@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from .base import BaseResponse
 
 
-class ErrorCodes(str, Enum):
+class ErrorCodes(StrEnum):
     DUPLICATE_ENTRY = "DUPLICATE_ENTRY"
     ENTITY_NOT_FOUND = "ENTITY_NOT_FOUND"
     NO_CONTENT = "NO_CONTENT"

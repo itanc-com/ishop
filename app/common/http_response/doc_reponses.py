@@ -8,8 +8,8 @@ from .success_response import SuccessResponse
 
 class ResponseSuccessDoc:
     @staticmethod
-    def HTTP_200_OK(description: str) -> dict:
-        return {200: {"model": SuccessResponse, "description": description}}
+    def HTTP_200_OK(description: str, response_type: type[BaseModel]) -> dict:
+        return {200: {"model": SuccessResponse[response_type], "description": description}}
 
     @staticmethod
     def HTTP_201_CREATED(description: str, response_type: type[BaseModel]) -> dict:
