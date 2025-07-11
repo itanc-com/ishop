@@ -1,25 +1,30 @@
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.category.models import Category
+from app.modules.category.repository_interface import CategoryRepositoryInterface
 
 
-class CategoryRepository:
-    def __init__(self, session: Session):
+class CategoryRepository(CategoryRepositoryInterface):
+    def __init__(self, session: AsyncSession):
         self.session = session
 
-    def create(self, title: str, parent_id: int = None) -> Category:
-        category = Category(title=title, parent_id=parent_id)
+    async def create(self, category: Category) -> Category:
         self.session.add(category)
-        self.session.commit()
-        self.session.refresh(category)
+        await self.session.commit()
+        await self.session.refresh(category)
         return category
 
-    def get_by_id(self, category_id: int) -> Category | None:
-        return self.session.query(Category).filter(Category.id == category_id).first()
+    async def get_by_id(self, category_id: int) -> Category | None:
+        query = select(Category).where(Category.id == category_id)
+        result = await self.session.execute(query)
+        return result.scalar_one_or_none()
 
-    def list_all(self) -> list[Category]:
-        return self.session.query(Category).all()
+    async def list_all(self) -> list[Category]:
+        query = select(Category)
+        result = await self.session.execute(query)
+        return list(result.scalars().all())
 
-    def delete(self, category: Category) -> None:
-        self.session.delete(category)
-        self.session.commit()
+    async def delete(self, category: Category) -> None:
+        await self.session.delete(category)
+        await self.session.commit()
