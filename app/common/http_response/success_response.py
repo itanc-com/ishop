@@ -1,4 +1,4 @@
-from enum import   StrEnum
+from enum import StrEnum
 from typing import Generic, TypeVar
 
 from pydantic import BaseModel

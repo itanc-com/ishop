@@ -16,10 +16,8 @@ from .depends import get_current_authenticated_user
 from .schemas import JWTPayload, OAuth2TokenResponse, TokenResponse, TokenType
 from .usecases.auth_user_by_email_password import AuthenticateUserByEmailPassword
 from .usecases.create_tokens import CreateTokens
-from .usecases.verify_token_payload import VerifyTokenPayload
 from .usecases.read_jwt_token import ReadJwtToken
-
-
+from .usecases.verify_token_payload import VerifyTokenPayload
 
 router = APIRouter(
     prefix="/auth",
@@ -178,7 +176,7 @@ async def auth_refresh_tokens(
     """
     payload: JWTPayload = await ReadJwtToken(refresh_token).execute()
 
-    user = await VerifyTokenPayload(user_repository).execute(payload,TokenType.refresh)
+    user = await VerifyTokenPayload(user_repository).execute(payload, TokenType.refresh)
     user_role = str(UserRole(user.role).name.lower())
 
     tokens = await CreateTokens(user_id=str(user.id), user_role=user_role).execute()
@@ -190,6 +188,7 @@ async def auth_refresh_tokens(
     )
 
     return success_response_builder(result, request)
+
 
 @router.get(
     "/token/verify",
@@ -220,15 +219,13 @@ async def auth_verify_refresh_token(
     """
     payload: JWTPayload = await ReadJwtToken(access_token).execute()
 
-    user_read = await VerifyTokenPayload(user_repository).execute(payload,TokenType.access)
+    user_read = await VerifyTokenPayload(user_repository).execute(payload, TokenType.access)
 
     result = SuccessResult[UserRead](
-            code=SuccessCodes.SUCCESS,
-            message="User is valid",
-            status_code=status.HTTP_200_OK,
-            data=user_read,
-        )
-        
+        code=SuccessCodes.SUCCESS,
+        message="User is valid",
+        status_code=status.HTTP_200_OK,
+        data=user_read,
+    )
+
     return success_response_builder(result, request)
-
-

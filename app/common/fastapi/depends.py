@@ -11,5 +11,6 @@ from app.modules.user.repository_interface import UserRepositoryInterface
 def get_user_repository(db_session: AsyncSession = Depends(get_db_session)) -> UserRepositoryInterface:
     return UserRepository(db_session)
 
+
 def get_product_repository(db_session: AsyncSession = Depends(get_db_session)) -> ProductRepositoryInterface:
     return ProductRepository(db_session)

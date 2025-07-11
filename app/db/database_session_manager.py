@@ -21,7 +21,7 @@ class DatabaseSessionManager:
 
         self._engine = None
         self._sessionmaker = None
-        
+
     @contextlib.asynccontextmanager
     async def connect(self) -> AsyncIterator[AsyncConnection]:
         if self._engine is None:
@@ -33,7 +33,7 @@ class DatabaseSessionManager:
             except Exception:
                 await connection.rollback()
                 raise
-    
+
     @contextlib.asynccontextmanager
     async def session(self) -> AsyncIterator[AsyncSession]:
         if self._sessionmaker is None:

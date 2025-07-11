@@ -33,18 +33,15 @@ async def user_register(
     user_schema: UserCreate,
     user_repository: Annotated[UserRepositoryInterface, Depends(get_user_repository)],
 ) -> SuccessResponse[UserRead]:
-   
-
     user_register = UserRegister(user_repository)
-    
-    user_read = await user_register.execute(user_schema)
- 
-    result = SuccessResult[UserRead](
-            code=SuccessCodes.CREATED,
-            message="User created successfully",
-            status_code=status.HTTP_201_CREATED,
-            data=user_read,
-        )
-        
-    return success_response_builder(result, request)
 
+    user_read = await user_register.execute(user_schema)
+
+    result = SuccessResult[UserRead](
+        code=SuccessCodes.CREATED,
+        message="User created successfully",
+        status_code=status.HTTP_201_CREATED,
+        data=user_read,
+    )
+
+    return success_response_builder(result, request)

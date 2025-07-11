@@ -32,7 +32,7 @@ class JWThandler:
             if expiration_time < int(current_time.timestamp()):
                 return False
 
-            keys_to_check = {"typ", "role", "iss"} 
+            keys_to_check = {"typ", "role", "iss"}
 
             for key in keys_to_check:
                 if key in expected_payload and token_payload.get(key) not in expected_payload[key]:
