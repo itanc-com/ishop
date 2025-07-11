@@ -11,12 +11,11 @@ if settings.environment != "production":
 
 engine_options = {
     "echo": settings.echo_sql,
-    "connect_args": {"check_same_thread": False}
-    if settings.database_url.startswith("sqlite")
-    else {}
+    "connect_args": {"check_same_thread": False} if settings.database_uri.startswith("sqlite") else {},
 }
 
-sessionmanager = DatabaseSessionManager(settings.database_url, engine_options)
+sessionmanager = DatabaseSessionManager(settings.database_uri, engine_options)
+
 
 async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
     async with sessionmanager.session() as session:

@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    database_url: str
+    database_uri: str
     environment: str
     echo_sql: bool = False
     jwt_issuer_server: str
