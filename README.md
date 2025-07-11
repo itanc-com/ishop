@@ -31,6 +31,12 @@ uv venv
 
 source .venv/bin/activate
 ```
+- see the environment
+
+``` bash
+printenv | grep ENV
+```
+
 
 ### 3. Install Dependencies
 ```
