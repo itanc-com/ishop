@@ -6,6 +6,7 @@ from app.common.exceptions.app_exceptions import AppBaseException
 from app.common.fastapi.lifespan import lifespan
 from app.modules.auth.routers import router as auth_router
 from app.modules.category.models import Category  # noqa
+from app.modules.category.routers import router as category_router
 from app.modules.product.models import Product  # noqa
 from app.modules.product.routers import router as products_router
 from app.modules.user.models import User  # noqa
@@ -28,6 +29,7 @@ async def root() -> dict:
 app.include_router(products_router)
 app.include_router(auth_router)
 app.include_router(user_router)
+app.include_router(category_router)
 
 
 @app.exception_handler(AppBaseException)
