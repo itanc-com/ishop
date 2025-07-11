@@ -4,7 +4,7 @@ from app.modules.category.repository_interface import CategoryRepositoryInterfac
 from app.modules.category.schemas import CategoryCreate, CategoryRead
 
 
-class CategoryCreateUsecase:
+class CreateCategory:
     def __init__(self, category_repository: CategoryRepositoryInterface):
         self.category_repository = category_repository
 
