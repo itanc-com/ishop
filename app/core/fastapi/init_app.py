@@ -6,6 +6,9 @@ from app.core.fastapi.routers import router_v1
 from app.core.logger.config import configure_logger
 from app.core.middelware.middelware_setup import setup_middlewares
 from app.core.pydantic.settings import settings
+from app.utils.date_time import get_utc_now
+
+from .app_state import AppStates, get_app_state
 
 
 @app.get("/")
@@ -22,6 +25,7 @@ async def root() -> dict:
 async def health_status() -> dict:
     return {
         "status": "OK",
+        "uptime": str(get_utc_now() - get_app_state(app, AppStates.APP_START_TIME)),
     }
 
 
