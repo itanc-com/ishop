@@ -13,5 +13,9 @@ class CategoryCreateUsecase:
         try:
             category = await self.category_repository.create(category)
         except Exception as e:
-            raise DatabaseOperationException("create", str(e), data={"category": category})
+            raise DatabaseOperationException(
+                operation="create",
+                message=str(e),
+                data={"category_create": category_create.model_dump()},
+            )
         return CategoryRead.model_validate(category)
