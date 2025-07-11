@@ -9,7 +9,6 @@ class CreateTokens:
         self.sub = user_id
         self.role = user_role
 
-
     async def execute(self) -> TokenResponse | None:
         # * create access-token
         pyaload_access_token: JWTPayload = JWTPayload.create(
@@ -42,11 +41,10 @@ class CreateTokens:
             raise InvalidPayloadException(
                 message=f"Failed to create refresh token, {e}", payload=refresh_token.model_dump()
             ) from e
-  
+
         return TokenResponse(
             access_token=access_token,
             refresh_token=refresh_token,
             access_token_expire_in=ACCESS_TOKEN_EXPIRE,
             refresh_token_expire_in=REFRESH_TOKEN_EXPIRE,
         )
-        

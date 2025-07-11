@@ -14,7 +14,6 @@ class AuthenticateUserByEmailPassword:
         self.user_repository = user_repository
 
     async def execute(self, email: str, raw_password: str) -> UserRead:
-        
         try:
             user: User = await self.user_repository.get_by_email(email)
         except Exception as e:
@@ -22,7 +21,7 @@ class AuthenticateUserByEmailPassword:
                 operation="select",
                 message=str(e),
             )
-        
+
         if not user:
             raise EntityNotFoundException(
                 message="User not found",

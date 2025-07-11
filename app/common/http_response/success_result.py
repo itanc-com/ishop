@@ -10,6 +10,7 @@ from .success_response import SuccessCodes, SuccessResponse
 
 T = TypeVar("T", bound=BaseModel)
 
+
 @dataclass
 class SuccessResult(Generic[T]):
     def __init__(
@@ -34,13 +35,14 @@ class SuccessResult(Generic[T]):
             timestamp=datetime.datetime.now(datetime.timezone.utc),  # RFC 3339-compliant
             path=path,
         )
-        
+
     def to_json_response(self, request: Request) -> JSONResponse:
         model = self.to_response_model(path=request.url.path)
         return JSONResponse(
             status_code=self.status_code,
             content=model.model_dump(mode="json"),
         )
+
 
 #! TODO: Remove this function and use the to_json_response method instead
 def success_response_builder(result: SuccessResult[T], request: Request) -> JSONResponse:
