@@ -1,41 +1,5 @@
-from fastapi import FastAPI, Request  # noqa: I001
-from fastapi.responses import JSONResponse
-# from fastapi.responses import ORJSONResponse
+from fastapi import FastAPI
 
-from app.common.exceptions.app_exceptions import AppBaseException
-from app.common.fastapi.lifespan import lifespan
-from app.modules.auth.routers import router as auth_router
-from app.modules.category.models import Category  # noqa
-from app.modules.category.routers import router as category_router
-from app.modules.product.models import Product  # noqa
-from app.modules.product.routers import router as products_router
-from app.modules.user.models import User  # noqa
-from app.modules.user.routers import router as user_router
+from app.core.fastapi.init_app import init_app
 
-app = FastAPI(
-    title="IShop API",
-    description="API for IShop, a headless e-commerce application.",
-    lifespan=lifespan,
-    #! need all json respose chnage to  ORJSONResponse
-    # default_response_class=ORJSONResponse # type: ignore
-)
-
-
-@app.get("/")
-async def root() -> dict:
-    return {"message": "Welcome to the IShop API!"}
-
-
-app.include_router(products_router)
-app.include_router(auth_router)
-app.include_router(user_router)
-app.include_router(category_router)
-
-
-@app.exception_handler(AppBaseException)
-async def handle_app_exception(request: Request, exc: AppBaseException):
-    error_model = exc.to_response_model(path=request.url.path)
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"detail": error_model.model_dump(mode="json")},
-    )
+app: FastAPI = init_app()

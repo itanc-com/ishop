@@ -1,9 +1,9 @@
 from fastapi.params import Depends
 
 from app.common.exceptions.app_exceptions import EntityNotFoundException
-from app.common.fastapi.depends import get_user_repository
 from app.modules.auth.schemas import JWTPayload
 from app.modules.auth.usecases.read_jwt_token import ReadJwtToken
+from app.modules.user.depends import get_user_repository
 from app.modules.user.repository_interface import UserRepositoryInterface
 from app.modules.user.schemas import UserRead
 from app.utils.security.oauth2_bearer import oauth2_bearer

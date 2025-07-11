@@ -4,10 +4,10 @@ from fastapi import APIRouter, Request, status
 from fastapi.params import Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
-from app.common.fastapi.depends import get_user_repository
 from app.common.http_response.doc_reponses import ResponseErrorDoc, ResponseSuccessDoc
 from app.common.http_response.success_response import SuccessCodes, SuccessResponse
 from app.common.http_response.success_result import SuccessResult, success_response_builder
+from app.modules.user.depends import get_user_repository
 from app.modules.user.models import UserRole
 from app.modules.user.repository_interface import UserRepositoryInterface
 from app.modules.user.schemas import UserRead

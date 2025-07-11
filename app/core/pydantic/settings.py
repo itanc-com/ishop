@@ -1,9 +1,19 @@
+from enum import Enum
+from functools import lru_cache
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+class EnvironmentType(str, Enum):
+    DEVELOPMENT = "development"
+    STAGING = "staging"
+    PRODUCTION = "production"
+    LOCAL = "local"
+    TESTING = "testing"
+    
 class Settings(BaseSettings):
     database_uri: str
-    environment: str
+    environment: EnvironmentType
     echo_sql: bool = False
     jwt_issuer_server: str
     jwt_secret_key: str
@@ -15,4 +25,11 @@ class Settings(BaseSettings):
     )
 
 
-settings: Settings = Settings()
+@lru_cache
+def get_settings() -> Settings:
+    return Settings()
+
+
+settings: Settings = get_settings()  # use this singleton in your app
+
+

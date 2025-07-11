@@ -4,7 +4,6 @@ import orjson
 from fastapi import APIRouter, Request, Response, status
 from fastapi.params import Depends
 
-from app.common.fastapi.depends import get_product_repository
 from app.common.http_response.doc_reponses import ResponseErrorDoc, ResponseSuccessDoc
 from app.common.http_response.success_response import SuccessCodes, SuccessResponse
 from app.common.http_response.success_result import SuccessResult
@@ -14,6 +13,7 @@ from app.modules.product.usecases.edit import ProductEdit
 from app.modules.product.usecases.get_by_id import ProductGetById
 from app.modules.product.usecases.list_all import ProductListAll
 
+from .depends import get_product_repository
 from .repository_interface import ProductRepositoryInterface
 from .schemas import ProductCreate, ProductRead, ProductUpdate
 

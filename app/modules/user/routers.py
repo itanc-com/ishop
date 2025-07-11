@@ -3,11 +3,11 @@ from typing import Annotated
 from fastapi import APIRouter, Request, status
 from fastapi.params import Depends
 
-from app.common.fastapi.depends import get_user_repository
 from app.common.http_response.doc_reponses import ResponseErrorDoc, ResponseSuccessDoc
 from app.common.http_response.success_response import SuccessCodes, SuccessResponse
 from app.common.http_response.success_result import SuccessResult, success_response_builder
 
+from .depends import get_user_repository
 from .repository_interface import UserRepositoryInterface
 from .schemas import UserCreate, UserRead
 from .usecases.user_register import UserRegister
