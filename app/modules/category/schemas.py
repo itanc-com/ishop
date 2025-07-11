@@ -1,11 +1,10 @@
 from datetime import datetime
-from typing import Literal
 
 from pydantic import BaseModel, Field
 
 
 class CategoryBase(BaseModel):
-    parent_id: int | Literal[0] = Field(0, description="Parent category ID", examples=[1], ge=0)
+    parent_id: int = Field(0, description="Parent category ID", examples=[1], ge=0)
     title: str = Field(..., description="Category title", examples=["Electronics"])
 
 
