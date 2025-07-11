@@ -10,7 +10,8 @@ class EnvironmentType(str, Enum):
     PRODUCTION = "production"
     LOCAL = "local"
     TESTING = "testing"
-    
+
+
 class Settings(BaseSettings):
     database_uri: str
     environment: EnvironmentType
@@ -31,5 +32,3 @@ def get_settings() -> Settings:
 
 
 settings: Settings = get_settings()  # use this singleton in your app
-
-

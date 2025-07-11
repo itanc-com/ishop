@@ -1,5 +1,3 @@
-from app.common.exceptions.app_exceptions import DatabaseOperationException, DuplicateEntryException
-from app.modules.cart.models import CartItem
 from app.modules.cart.repository_interface import CartItemRepositoryInterface
 
 from ..schemas import CartItemCreate, CartItemRead
@@ -10,7 +8,6 @@ class AddItemToCart:
         self.cart_item_repository = cart_item_repository
 
     async def execute(self, cart_item_create: CartItemCreate) -> CartItemRead | None:
-        
         """
         This method will Add a new item to the cart.
         It will insert a new cart item to the database using the repository's insert method.
@@ -21,5 +18,5 @@ class AddItemToCart:
         If the cart item is not added, it will return None.
         If the item is added, it will return the CartItemRead object.
         """
-        
+
         pass

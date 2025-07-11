@@ -13,4 +13,3 @@ app: FastAPI = FastAPI(
     # middleware=make_middleware(),
     lifespan=lifespan,
 )
-

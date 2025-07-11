@@ -13,4 +13,3 @@ router_v1.include_router(auth_router)
 router_v1.include_router(category_router)
 router_v1.include_router(products_router)
 router_v1.include_router(user_router)
-

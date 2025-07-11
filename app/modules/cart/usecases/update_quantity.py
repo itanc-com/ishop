@@ -1,9 +1,3 @@
-from app.common.exceptions.app_exceptions import (
-    DatabaseOperationException,
-    DuplicateEntryException,
-    EntityNotFoundException,
-)
-from app.modules.cart.models import CartItem
 from app.modules.cart.repository_interface import CartItemRepositoryInterface
 
 from ..schemas import CartItemRead
@@ -25,5 +19,5 @@ class UpdateCartItemQuantity:
         If the item is removed, it will return None.
         If the item is updated, it will return the updated CartItemRead object.
         """
-        
+
         pass

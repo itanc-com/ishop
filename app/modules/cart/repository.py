@@ -14,7 +14,6 @@ class CartItemRepository(CartItemRepositoryInterface):
         await self.session.refresh(cart_item)
         return cart_item
 
-
     async def bulk_insert(self, cart_items: list[CartItem]) -> list[CartItem]:
         self.session.add_all(cart_items)
         await self.session.commit()
