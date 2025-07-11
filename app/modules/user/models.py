@@ -18,9 +18,9 @@ class UserStatus(IntEnum):
 
 
 class User(Base):
-    __tablename__ = "users"
+    __tablename__ = "tbl_users"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     first_name = Column(String(255), nullable=True)
     last_name = Column(String(255), nullable=True)
     email = Column(Text, unique=True, index=True, nullable=False)
