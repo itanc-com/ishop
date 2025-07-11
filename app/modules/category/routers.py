@@ -1,6 +1,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Request, status
+from fastapi.responses import JSONResponse
 
 from app.common.http_response.doc_reponses import ResponseErrorDoc, ResponseSuccessDoc
 from app.common.http_response.success_response import SuccessCodes, SuccessResponse
@@ -8,7 +9,7 @@ from app.common.http_response.success_result import SuccessResult
 from app.modules.category.depends import get_category_repository
 from app.modules.category.repository_interface import CategoryRepositoryInterface
 from app.modules.category.schemas import CategoryCreate, CategoryRead
-from app.modules.category.usecases.category_create import CategoryCreateUsecase
+from app.modules.category.usecases.category_create import CreateCategory
 
 router = APIRouter(
     prefix="/categories",
@@ -30,10 +31,10 @@ async def category_create(
     request: Request,
     category_schema: CategoryCreate,
     category_repository: Annotated[CategoryRepositoryInterface, Depends(get_category_repository)],
-):
-    category_create = CategoryCreateUsecase(category_repository)
+) -> JSONResponse:
+    create_category_usecase = CreateCategory(category_repository)
 
-    category_read = await category_create.execute(category_schema)
+    category_read = await create_category_usecase.execute(category_schema)
 
     result = SuccessResult[CategoryRead](
         code=SuccessCodes.CREATED,
