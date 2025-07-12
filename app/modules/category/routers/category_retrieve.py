@@ -21,5 +21,8 @@ from app.modules.category.usecases.category_get_by_id import CategoryGetById
 async def get_category_by_id(
     category_id: int, category_repository: Annotated[CategoryRepositoryInterface, Depends(get_category_repository)]
 ) -> CategoryRead:
-    category_read = await CategoryGetById(category_repository).execute(category_id)
+    category_by_id_usecase = CategoryGetById(category_repository)
+
+    category_read = await category_by_id_usecase.execute(category_id)
+
     return category_read
