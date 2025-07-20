@@ -4,11 +4,10 @@ from typing import Generic, TypeVar
 
 from fastapi import Request
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel
 
 from .success_response import SuccessCodes, SuccessResponse
 
-T = TypeVar("T", bound=BaseModel)
+T = TypeVar("T")
 
 
 @dataclass

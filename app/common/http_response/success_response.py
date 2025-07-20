@@ -1,11 +1,9 @@
 from enum import StrEnum
 from typing import Generic, TypeVar
 
-from pydantic import BaseModel
-
 from .base import BaseResponse
 
-T = TypeVar("T", bound=BaseModel)
+T = TypeVar("T")
 
 
 class SuccessCodes(StrEnum):

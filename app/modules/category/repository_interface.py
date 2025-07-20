@@ -13,7 +13,7 @@ class CategoryRepositoryInterface(ABC):
         pass
 
     @abstractmethod
-    async def list_all(self) -> list[Category]:
+    async def list_all(self, parent_id: int = 0) -> list[Category]:
         pass
 
     @abstractmethod
