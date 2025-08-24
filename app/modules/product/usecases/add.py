@@ -1,4 +1,4 @@
-from app.common.exceptions.app_exceptions import DatabaseOperationException
+from app.common.exceptions.app_exceptions import DatabaseOperationException, DuplicateSKUException
 from app.modules.product.models import Product
 from app.modules.product.repository_interface import ProductRepositoryInterface
 from app.modules.product.schemas import ProductCreate, ProductRead
@@ -9,6 +9,10 @@ class ProductAdd:
         self.product_repository = product_repository
 
     async def execute(self, product_create: ProductCreate) -> ProductRead | None:
+        # Check for duplicate SKU before insert
+        if await self.product_repository.sku_exists(product_create.sku):
+            raise DuplicateSKUException(product_create.sku, data={"product": product_create.model_dump()})
+
         product_data = Product(**product_create.model_dump())
 
         try:

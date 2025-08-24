@@ -21,6 +21,7 @@ class ErrorCodes(StrEnum):
     UNAUTHORIZED = "UNAUTHORIZED"
     FORBIDDEN = "FORBIDDEN"
     DATABASE_ERROR = "DATABASE_ERROR"
+    VALIDATION_ERROR = "VALIDATION_ERROR"
 
 
 class ErrorResponse(BaseResponse):

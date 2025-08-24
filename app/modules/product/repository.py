@@ -51,3 +51,8 @@ class ProductRepository:
 
         result = await self.session.execute(query)
         return result.scalars().all()
+
+    async def sku_exists(self, sku: str) -> bool:
+        query = select(Product).where(Product.sku == sku)
+        result = await self.session.execute(query)
+        return result.scalar_one_or_none() is not None
