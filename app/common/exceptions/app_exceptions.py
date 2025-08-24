@@ -75,14 +75,3 @@ class InvalidCredentialsException(AppBaseException):
         if data is None:
             data = {}
         super().__init__(code=ErrorCodes.INVALID_CREDENTIALS, message=message, status_code=401, data=data)
-
-
-class DuplicateSKUException(AppBaseException):
-    def __init__(self, sku: str, data: dict | None = None):
-        message = f"SKU '{sku}' already exists. Please use a unique SKU."
-        super().__init__(
-            code=ErrorCodes.VALIDATION_ERROR,
-            message=message,
-            status_code=400,
-            data=data or {"sku": sku},
-        )

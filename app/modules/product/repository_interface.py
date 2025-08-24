@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Any
 
 from .models import Product
 
@@ -25,5 +26,5 @@ class ProductRepositoryInterface(ABC):
         pass
 
     @abstractmethod
-    async def sku_exists(self, sku: str) -> bool:
+    async def exists_by_field(self, field: str, value: Any) -> bool:
         pass
