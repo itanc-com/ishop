@@ -7,7 +7,7 @@ from fastapi.params import Depends
 from app.common.http_response.doc_reponses import ResponseErrorDoc, ResponseSuccessDoc
 from app.common.http_response.success_response import SuccessCodes, SuccessResponse
 from app.common.http_response.success_result import SuccessResult
-from app.modules.product.usecases.add import ProductAdd
+from app.modules.product.usecases.create import ProductCreate
 from app.modules.product.usecases.delete import ProductDelete
 from app.modules.product.usecases.edit import ProductEdit
 from app.modules.product.usecases.get_by_id import ProductGetById
@@ -15,7 +15,7 @@ from app.modules.product.usecases.list_all import ProductListAll
 
 from .depends import get_product_repository
 from .repository_interface import ProductRepositoryInterface
-from .schemas import ProductCreate, ProductRead, ProductUpdate
+from .schemas import ProductInCreate, ProductRead, ProductUpdate
 
 router = APIRouter(
     prefix="/products",
@@ -34,10 +34,10 @@ router = APIRouter(
 )
 async def create_product(
     request: Request,
-    product_create: ProductCreate,
+    product_create: ProductInCreate,
     product_repository: Annotated[ProductRepositoryInterface, Depends(get_product_repository)],
 ) -> SuccessResponse[ProductRead]:
-    product_read = await ProductAdd(product_repository).execute(product_create)
+    product_read = await ProductCreate(product_repository).execute(product_create)
 
     result = SuccessResult[ProductRead](
         code=SuccessCodes.CREATED,

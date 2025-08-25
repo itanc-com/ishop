@@ -1,3 +1,5 @@
+from typing import Any
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -51,3 +53,8 @@ class ProductRepository:
 
         result = await self.session.execute(query)
         return result.scalars().all()
+
+    async def exists_by_field(self, field: str, value: Any) -> bool:
+        stmt = select(Product).where(getattr(Product, field) == value)
+        result = await self.session.execute(stmt)
+        return result.scalar_one_or_none() is not None
