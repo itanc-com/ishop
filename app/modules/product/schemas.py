@@ -13,7 +13,7 @@ class ProductBase(BaseModel):
     is_visible: bool = Field(default=False)
 
 
-class ProductCreate(ProductBase):
+class ProductInCreate(ProductBase):
     """
     Used for creating a new product.
     Does not include `id` or timestamps.
