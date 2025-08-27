@@ -1,6 +1,9 @@
+from typing import List
+
+from app.common.exceptions.app_exceptions import DatabaseOperationException
 from app.modules.cart.repository_interface import CartItemRepositoryInterface
 
-from ..schemas import CartRead
+from ..schemas import CartItemRead, CartRead
 
 
 class ReadCart:
@@ -9,14 +12,42 @@ class ReadCart:
 
     async def execute(self, user_id: int) -> CartRead | None:
         """
-        This method will read the cart for a specific user.
-        It will retrieve all cart items for the given user_id from the database using the repository's
-        find_all method.
-        If the user does not have any items in the cart, it will return None.
-        If the retrieval fails, it will raise a DatabaseOperationException.
-        The return value is a CartRead object containing the list of CartItemRead objects.
-        If the cart is empty, it will return None.
-        If the cart is successfully retrieved, it will return the CartRead object.
+        Retrieve the cart items for a specific user.
+
+        Steps:
+        1. Query all cart items for the given user_id using the repository.
+        2. If no items are found, return None.
+        3. Map entity models to CartItemRead DTOs.
+        4. Return a CartRead object containing all cart items.
+
+        Raises:
+            DatabaseOperationException: If retrieving items fails.
+
+        Returns:
+            CartRead | None: Returns None if the user has no cart items.
         """
 
-        pass
+        try:
+            cart_items = await self.cart_item_repository.find_all(user_id)
+        except Exception as e:
+            raise DatabaseOperationException(operation="find_all", message=str(e), data={"user_id": user_id})
+
+        if not cart_items:
+            return None
+
+        items_read: List[CartItemRead] = [
+            CartItemRead(
+                user_id=ci.user_id,
+                product_id=ci.product_id,
+                quantity=ci.quantity,
+                title=getattr(ci, "title", ""),
+                sku=getattr(ci, "sku", ""),
+                price=getattr(ci, "price", 0.0),
+                total=getattr(ci, "total", 0.0),
+                date_created_gmt=getattr(ci, "date_created", None),
+                date_modified_gmt=getattr(ci, "date_modified", None),
+            )
+            for ci in cart_items
+        ]
+
+        return CartRead(items=items_read)
