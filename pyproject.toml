@@ -10,6 +10,7 @@ dependencies = [
     "greenlet>=3.2.1",
     "orjson>=3.10.18",
     "passlib[argon2]>=1.7.4",
+    "pre-commit>=4.2.0",
     "pydantic-settings>=2.9.1",
     "python-decouple>=3.8",
     "python-jose>=3.4.0",
