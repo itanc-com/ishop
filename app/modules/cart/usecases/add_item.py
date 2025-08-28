@@ -7,6 +7,7 @@ from app.modules.cart.repository_interface import CartItemRepositoryInterface
 from app.modules.product.repository_interface import ProductRepositoryInterface
 
 from ..schemas import CartItemCreate, CartItemRead
+from ..models import CartItem
 
 
 class AddItemToCart:
@@ -34,7 +35,7 @@ class AddItemToCart:
                 value=str(cart_item_create.product_id),
             )
 
-        cart_item = self.cart_item_repository.model_class(
+        cart_item: CartItem = self.cart_item_repository.model_class(
             user_id=cart_item_create.user_id,
             product_id=cart_item_create.product_id,
             quantity=cart_item_create.quantity,
