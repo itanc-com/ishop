@@ -1,4 +1,5 @@
 from sqlalchemy import select, tuple_
+from sqlalchemy.exc import SQLAlchemyError
 
 from app.common.exceptions.app_exceptions import (
     DatabaseOperationException,
@@ -13,7 +14,9 @@ from ..schemas import CartBulkCreate, CartItemRead, CartRead
 
 class CreateCartFromItems:
     def __init__(
-        self, cart_item_repository: CartItemRepositoryInterface, product_repository: ProductRepositoryInterface
+        self,
+        cart_item_repository: CartItemRepositoryInterface,
+        product_repository: ProductRepositoryInterface
     ) -> None:
         self.cart_item_repository = cart_item_repository
         self.product_repository = product_repository
@@ -76,13 +79,10 @@ class CreateCartFromItems:
         ]
 
         try:
-            inserted_items = await self.cart_item_repository.bulk_insert(cart_items)
-        except Exception as e:
-            raise DatabaseOperationException(
-                operation="bulk_insert",
-                message=str(e),
-                data={"items": [f"{i.user_id}-{i.product_id}" for i in cart_items]},
-            )
+            async with self.session.begin():
+                inserted_items = await self.cart_item_repository.bulk_insert(cart_items)
+        except SQLAlchemyError as e:
+            raise DatabaseOperationException(operation="bulk_insert", message=str(e))
 
         items_read: list[CartItemRead] = [
             CartItemRead(
