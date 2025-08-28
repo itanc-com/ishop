@@ -1,5 +1,3 @@
-from typing import List, Tuple
-
 from sqlalchemy import select, tuple_
 
 from app.common.exceptions.app_exceptions import (
@@ -51,7 +49,7 @@ class CreateCartFromItems:
                 )
 
         # Prepare list of (user_id, product_id) tuples
-        user_product_pairs: List[Tuple[int, int]] = [(item.user_id, item.product_id) for item in cart_bulk.items]
+        user_product_pairs: list[tuple[int, int]] = [(item.user_id, item.product_id) for item in cart_bulk.items]
 
         # Query existing items in one go
         stmt = select(
@@ -86,7 +84,7 @@ class CreateCartFromItems:
                 data={"items": [f"{i.user_id}-{i.product_id}" for i in cart_items]},
             )
 
-        items_read: List[CartItemRead] = [
+        items_read: list[CartItemRead] = [
             CartItemRead(
                 user_id=ci.user_id,
                 product_id=ci.product_id,
