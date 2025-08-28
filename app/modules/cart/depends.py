@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from fastapi.params import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -7,5 +9,7 @@ from .repository import CartItemRepository
 from .repository_interface import CartItemRepositoryInterface
 
 
-def get_cartitem_repository(db_session: AsyncSession = Depends(get_db_session)) -> CartItemRepositoryInterface:
+def get_cartitem_repository(
+        db_session: Annotated[AsyncSession, Depends(get_db_session)]
+) -> CartItemRepositoryInterface:
     return CartItemRepository(db_session)
