@@ -45,18 +45,14 @@ class AddItemToCart:
         except Exception as e:
             raise DatabaseOperationException(operation="insert", message=str(e))
 
-        return self._map_to_read(inserted)
-
-    def _map_to_read(self, cart_item) -> CartItemRead:
-        """Map CartItem ORM object to CartItemRead schema."""
         return CartItemRead(
-            user_id=cart_item.user_id,
-            product_id=cart_item.product_id,
-            quantity=cart_item.quantity,
-            title=getattr(cart_item, "title", ""),
-            sku=getattr(cart_item, "sku", ""),
-            price=getattr(cart_item, "price", 0.0),
-            total=getattr(cart_item, "total", 0.0),
-            date_created_gmt=getattr(cart_item, "date_created", None),
-            date_modified_gmt=getattr(cart_item, "date_modified", None),
+            user_id=inserted.user_id,
+            product_id=inserted.product_id,
+            quantity=inserted.quantity,
+            title=getattr(inserted, "title", ""),
+            sku=getattr(inserted, "sku", ""),
+            price=getattr(inserted, "price", 0.0),
+            total=getattr(inserted, "total", 0.0),
+            date_created_gmt=getattr(inserted, "date_created", None),
+            date_modified_gmt=getattr(inserted, "date_modified", None),
         )
