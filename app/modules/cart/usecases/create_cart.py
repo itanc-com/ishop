@@ -67,9 +67,8 @@ class CreateCartFromItems:
         existing_pairs = set(result.fetchall())
 
         if existing_pairs:
-            # Take the first duplicate to show in error (could also aggregate all)
-            dup_user_id, dup_product_id = next(iter(existing_pairs))
-            raise DuplicateEntryException(field="product_id", value=str(dup_product_id))
+            duplicates = [{"user_id": uid, "product_id": pid} for uid, pid in existing_pairs]
+            raise DuplicateEntryException(field="product_id", value=str([d["product_id"] for d in duplicates]))
 
         cart_items = [
             self.cart_item_repository.model_class(
