@@ -86,17 +86,17 @@ class CreateCartFromItems:
 
         items_read: list[CartItemRead] = [
             CartItemRead(
-                user_id=ci.user_id,
-                product_id=ci.product_id,
-                quantity=ci.quantity,
-                title=getattr(ci, "title", ""),
-                sku=getattr(ci, "sku", ""),
-                price=getattr(ci, "price", 0.0),
-                total=getattr(ci, "total", 0.0),
-                date_created_gmt=getattr(ci, "date_created", None),
-                date_modified_gmt=getattr(ci, "date_modified", None),
+                user_id=cart_item.user_id,
+                product_id=cart_item.product_id,
+                quantity=cart_item.quantity,
+                title=getattr(cart_item, "title", ""),
+                sku=getattr(cart_item, "sku", ""),
+                price=getattr(cart_item, "price", 0.0),
+                total=getattr(cart_item, "total", 0.0),
+                date_created_gmt=getattr(cart_item, "date_created", None),
+                date_modified_gmt=getattr(cart_item, "date_modified", None),
             )
-            for ci in inserted_items
+            for cart_item in inserted_items
         ]
 
         return CartRead(items=items_read)
