@@ -10,6 +10,7 @@ from app.modules.cart.repository_interface import CartItemRepositoryInterface
 from app.modules.product.repository_interface import ProductRepositoryInterface
 
 from ..schemas import CartBulkCreate, CartItemRead, CartRead
+from ..models import CartItem
 
 
 class CreateCartFromItems:
@@ -51,26 +52,29 @@ class CreateCartFromItems:
                     data={"product_id": item.product_id}, message=f"Product with id {item.product_id} not found"
                 )
 
-        # Prepare list of (user_id, product_id) tuples
-        user_product_pairs: list[tuple[int, int]] = [(item.user_id, item.product_id) for item in cart_bulk.items]
+        user_product: list[tuple[int, int]] = [(item.user_id, item.product_id) for item in cart_bulk.items]
 
-        # Query existing items in one go
-        stmt = select(
+        existing_items_stmt = select(
             self.cart_item_repository.model_class.user_id, self.cart_item_repository.model_class.product_id
         ).where(
             tuple_(self.cart_item_repository.model_class.user_id, self.cart_item_repository.model_class.product_id).in_(
-                user_product_pairs
+                user_product
             )
         )
 
-        result = await self.cart_item_repository.session.execute(stmt)
-        existing_pairs = set(result.fetchall())
+        existing_items_result = await self.cart_item_repository.session.execute(existing_items_stmt)
+        duplicate_entries = set(existing_items_result.fetchall())
 
-        if existing_pairs:
-            duplicates = [{"user_id": uid, "product_id": pid} for uid, pid in existing_pairs]
-            raise DuplicateEntryException(field="product_id", value=str([d["product_id"] for d in duplicates]))
+        if duplicate_entries:
+            duplicates_str = ", ".join(
+                [f"(user_id={uid}, product_id={pid})" for uid, pid in duplicate_entries]
+            )
+            raise DuplicateEntryException(
+                field="user_id_product_id",
+                value=duplicates_str
+            )
 
-        cart_items = [
+        cart_items: list[CartItem] = [
             self.cart_item_repository.model_class(
                 user_id=item.user_id, product_id=item.product_id, quantity=item.quantity
             )
@@ -79,7 +83,7 @@ class CreateCartFromItems:
 
         try:
             async with self.session.begin():
-                inserted_items = await self.cart_item_repository.bulk_insert(cart_items)
+                inserted_items: list[CartItem] = await self.cart_item_repository.bulk_insert(cart_items)
         except SQLAlchemyError as e:
             raise DatabaseOperationException(operation="bulk_insert", message=str(e))
 
