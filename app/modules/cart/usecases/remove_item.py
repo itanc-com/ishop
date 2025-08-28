@@ -1,3 +1,5 @@
+from sqlalchemy.exc import SQLAlchemyError
+
 from app.common.exceptions.app_exceptions import DatabaseOperationException, EntityNotFoundException
 from app.modules.cart.repository_interface import CartItemRepositoryInterface
 
@@ -14,13 +16,21 @@ class RemoveItemFromCart:
             DatabaseOperationException: if the deletion fails.
         """
 
-        item = await self.cart_item_repository.get_by_user_and_product(user_id, product_id)
+        try:
+            item = await self.cart_item_repository.get_by_user_and_product(user_id, product_id)
+        except DatabaseOperationException:
+            raise
+        except Exception as e:
+            raise DatabaseOperationException(
+                operation="fetch", message=str(e), data={"user_id": user_id, "product_id": product_id}
+            )
+
         if not item:
             raise EntityNotFoundException(data={"user_id": user_id, "product_id": product_id})
 
         try:
             await self.cart_item_repository.remove(user_id=user_id, product_id=product_id)
-        except Exception as e:
+        except SQLAlchemyError as e:
             raise DatabaseOperationException(operation="delete", message=str(e))
 
         return None
