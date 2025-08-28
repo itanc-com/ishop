@@ -16,7 +16,7 @@ class CartItemRepositoryInterface(ABC):
         pass
 
     @abstractmethod
-    async def remove(self, user_id, product_id):
+    async def remove(self, user_id, product_id) -> None:
         pass
 
     @abstractmethod
