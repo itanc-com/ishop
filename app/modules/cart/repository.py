@@ -32,15 +32,15 @@ class CartItemRepository(CartItemRepositoryInterface):
         try:
             self.session.add_all(cart_items)
             await self.session.commit()
-            for ci in cart_items:
-                await self.session.refresh(ci)
+            for cart_item in cart_items:
+                await self.session.refresh(cart_item)
             return cart_items
         except SQLAlchemyError as e:
             await self.session.rollback()
             raise DatabaseOperationException(
                 operation="bulk_insert",
                 message=str(e),
-                data={"items": [{"user_id": ci.user_id, "product_id": ci.product_id} for ci in cart_items]},
+                data={"items": [{"user_id": cart_item.user_id, "product_id": cart_item.product_id} for cart_item in cart_items]},
             )
 
     async def find_all(self, user_id: int) -> list[CartItem]:
