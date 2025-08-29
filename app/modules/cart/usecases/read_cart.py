@@ -28,7 +28,7 @@ class ReadCart:
         try:
             cart_items = await self.cart_item_repository.find_all(user_id)
         except Exception as e:
-            raise DatabaseOperationException(operation="find_all", message=str(e), data={"user_id": user_id})
+            raise DatabaseOperationException(operation="read", message=str(e), data={"user_id": user_id})
 
         items_read: list[CartItemRead] = [
             CartItemRead(

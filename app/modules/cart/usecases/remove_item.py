@@ -22,7 +22,7 @@ class RemoveItemFromCart:
             raise
         except Exception as e:
             raise DatabaseOperationException(
-                operation="fetch", message=str(e), data={"user_id": user_id, "product_id": product_id}
+                operation="read", message=str(e), data={"user_id": user_id, "product_id": product_id}
             )
 
         if not item:

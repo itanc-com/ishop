@@ -85,7 +85,7 @@ class CreateCartFromItems:
             async with self.session.begin():
                 inserted_items: list[CartItem] = await self.cart_item_repository.bulk_insert(cart_items)
         except SQLAlchemyError as e:
-            raise DatabaseOperationException(operation="bulk_insert", message=str(e))
+            raise DatabaseOperationException(operation="create", message=str(e))
 
         items_read: list[CartItemRead] = [
             CartItemRead(

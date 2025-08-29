@@ -44,7 +44,7 @@ class AddItemToCart:
         try:
             inserted = await self.cart_item_repository.insert(cart_item)
         except Exception as e:
-            raise DatabaseOperationException(operation="insert", message=str(e))
+            raise DatabaseOperationException(operation="create", message=str(e))
 
         return CartItemRead(
             user_id=inserted.user_id,

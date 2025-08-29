@@ -23,7 +23,7 @@ class CartItemRepository(CartItemRepositoryInterface):
         except SQLAlchemyError as e:
             await self.session.rollback()
             raise DatabaseOperationException(
-                operation="insert",
+                operation="create",
                 message=str(e),
                 data={"user_id": cart_item.user_id, "product_id": cart_item.product_id},
             )
@@ -38,7 +38,7 @@ class CartItemRepository(CartItemRepositoryInterface):
         except SQLAlchemyError as e:
             await self.session.rollback()
             raise DatabaseOperationException(
-                operation="bulk_insert",
+                operation="create",
                 message=str(e),
                 data={"items": [{"user_id": cart_item.user_id, "product_id": cart_item.product_id} for cart_item in cart_items]},
             )
@@ -49,7 +49,7 @@ class CartItemRepository(CartItemRepositoryInterface):
             result = await self.session.execute(stmt)
             return result.scalars().all()
         except SQLAlchemyError as e:
-            raise DatabaseOperationException(operation="find_all", message=str(e), data={"user_id": user_id})
+            raise DatabaseOperationException(operation="read", message=str(e), data={"user_id": user_id})
 
     async def clear_cart(self, user_id: int) -> None:
         try:
@@ -57,7 +57,7 @@ class CartItemRepository(CartItemRepositoryInterface):
             await self.session.commit()
         except SQLAlchemyError as e:
             await self.session.rollback()
-            raise DatabaseOperationException(operation="clear_cart", message=str(e), data={"user_id": user_id})
+            raise DatabaseOperationException(operation="delete", message=str(e), data={"user_id": user_id})
 
     async def get_by_user_and_product(self, user_id: int, product_id: int) -> CartItem | None:
         try:
@@ -68,7 +68,7 @@ class CartItemRepository(CartItemRepositoryInterface):
             return result.scalar_one_or_none()
         except SQLAlchemyError as e:
             raise DatabaseOperationException(
-                operation="get_by_user_and_product", message=str(e), data={"user_id": user_id, "product_id": product_id}
+                operation="read", message=str(e), data={"user_id": user_id, "product_id": product_id}
             )
 
     async def remove(self, user_id: int, product_id: int) -> None:
@@ -91,5 +91,5 @@ class CartItemRepository(CartItemRepositoryInterface):
         except SQLAlchemyError as e:
             await self.session.rollback()
             raise DatabaseOperationException(
-                operation="remove", message=str(e), data={"user_id": user_id, "product_id": product_id}
+                operation="delete", message=str(e), data={"user_id": user_id, "product_id": product_id}
             )
