@@ -1,3 +1,5 @@
+from sqlalchemy.exc import SQLAlchemyError, IntegrityError
+
 from app.common.exceptions.app_exceptions import (
     DatabaseOperationException,
     DuplicateEntryException,
@@ -12,7 +14,9 @@ from ..models import CartItem
 
 class AddItemToCart:
     def __init__(
-        self, cart_item_repository: CartItemRepositoryInterface, product_repository: ProductRepositoryInterface
+        self,
+        cart_item_repository: CartItemRepositoryInterface,
+        product_repository: ProductRepositoryInterface,
     ) -> None:
         self.cart_item_repository = cart_item_repository
         self.product_repository = product_repository
@@ -25,15 +29,20 @@ class AddItemToCart:
                 message=f"Product with id {cart_item_create.product_id} not found",
             )
 
-        existing = await self.cart_item_repository.get_by_user_and_product(
-            user_id=cart_item_create.user_id,
-            product_id=cart_item_create.product_id,
-        )
-        if existing:
-            raise DuplicateEntryException(
-                field="product_id",
-                value=str(cart_item_create.product_id),
+        try:
+            existing_cart_item = await self.cart_item_repository.get_by_user_and_product(
+                user_id=cart_item_create.user_id,
+                product_id=cart_item_create.product_id,
             )
+        except SQLAlchemyError as e:
+            raise DatabaseOperationException(
+                operation="read",
+                message=str(e),
+                data={"user_id": cart_item_create.user_id, "product_id": cart_item_create.product_id},
+            )
+
+        if existing_cart_item:
+            raise DuplicateEntryException(field="product_id", value=str(cart_item_create.product_id))
 
         cart_item: CartItem = self.cart_item_repository.model_class(
             user_id=cart_item_create.user_id,
@@ -43,8 +52,16 @@ class AddItemToCart:
 
         try:
             inserted = await self.cart_item_repository.insert(cart_item)
-        except Exception as e:
-            raise DatabaseOperationException(operation="create", message=str(e))
+        except IntegrityError as e:
+            await self.cart_item_repository.session.rollback()
+            raise DuplicateEntryException(field="product_id", value=str(cart_item_create.product_id))
+        except SQLAlchemyError as e:
+            await self.cart_item_repository.session.rollback()
+            raise DatabaseOperationException(
+                operation="create",
+                message=str(e),
+                data={"user_id": cart_item_create.user_id, "product_id": cart_item_create.product_id},
+            )
 
         return CartItemRead(
             user_id=inserted.user_id,
