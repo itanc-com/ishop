@@ -1,3 +1,5 @@
+from sqlalchemy.exc import SQLAlchemyError
+
 from app.common.exceptions.app_exceptions import DatabaseOperationException
 from app.modules.cart.repository_interface import CartItemRepositoryInterface
 
@@ -9,25 +11,9 @@ class ReadCart:
         self.cart_item_repository = cart_item_repository
 
     async def execute(self, user_id: int) -> CartRead | None:
-        """
-        Retrieve the cart items for a specific user.
-
-        Steps:
-        1. Query all cart items for the given user_id using the repository.
-        2. If no items are found, return an empty CartRead (Null Object Pattern).
-        3. Map entity models to CartItemRead DTOs.
-        4. Return a CartRead object containing all cart items.
-
-        Raises:
-           DatabaseOperationException: If retrieving items fails.
-
-        Returns:
-           CartRead: Always returns a CartRead object (possibly with an empty items list).
-        """
-
         try:
             cart_items = await self.cart_item_repository.find_all(user_id)
-        except Exception as e:
+        except SQLAlchemyError as e:
             raise DatabaseOperationException(operation="read", message=str(e), data={"user_id": user_id})
 
         items_read: list[CartItemRead] = [
