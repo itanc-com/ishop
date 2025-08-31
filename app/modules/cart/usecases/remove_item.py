@@ -1,3 +1,6 @@
+from sqlalchemy.exc import SQLAlchemyError, IntegrityError
+
+from app.common.exceptions.app_exceptions import DatabaseOperationException, EntityNotFoundException
 from app.modules.cart.repository_interface import CartItemRepositoryInterface
 
 
@@ -6,12 +9,34 @@ class RemoveItemFromCart:
         self.cart_item_repository = cart_item_repository
 
     async def execute(self, user_id: int, product_id: int) -> None:
-        """
-        This method will remove a specific cart item by given user_id and product_id.
-        It will call the repository's remove method to delete the cart item.
-        If the item does not exist, it will raise an EntityNotFoundException.
-        If the removal fails, it will raise a DatabaseOperationException.
-        If the item is successfully removed, it will return None or decide what to return based on the implementation.
-        """
+        try:
+            item = await self.cart_item_repository.get_by_user_and_product(user_id, product_id)
+        except SQLAlchemyError as e:
+            raise DatabaseOperationException(
+                operation="read",
+                message=str(e),
+                data={"user_id": user_id, "product_id": product_id},
+            )
 
-        pass
+        if not item:
+            raise EntityNotFoundException(
+                data={"user_id": user_id, "product_id": product_id},
+                message=f"CartItem with user_id={user_id} and product_id={product_id} not found",
+            )
+
+        try:
+            await self.cart_item_repository.remove(user_id=user_id, product_id=product_id)
+        except IntegrityError as e:
+            await self.cart_item_repository.session.rollback()
+            raise DatabaseOperationException(
+                operation="delete",
+                message=f"Integrity violation: {str(e)}",
+                data={"user_id": user_id, "product_id": product_id},
+            )
+        except SQLAlchemyError as e:
+            await self.cart_item_repository.session.rollback()
+            raise DatabaseOperationException(
+                operation="delete",
+                message=str(e),
+                data={"user_id": user_id, "product_id": product_id},
+            )
