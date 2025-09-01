@@ -5,8 +5,6 @@ from .models import CartItem
 
 
 class CartItemRepositoryInterface(ABC):
-    model_class = CartItem
-
     @abstractmethod
     async def bulk_insert(self, cart_items: list[CartItem]) -> list[CartItem]:
         """
@@ -81,6 +79,20 @@ class CartItemRepositoryInterface(ABC):
 
         Returns:
             CartItem object if found, None if not found
+        """
+        pass
+
+    @abstractmethod
+    async def has_item(self, user_id: int, product_id: int) -> bool:
+        """
+        Check if a specific item exists in user's cart.
+
+        Args:
+            user_id: The user ID
+            product_id: The product ID
+
+        Returns:
+            True if the item exists in cart, False otherwise
         """
         pass
 

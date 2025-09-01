@@ -9,8 +9,6 @@ from .repository_interface import CartItemRepositoryInterface
 
 
 class CartItemRepository(CartItemRepositoryInterface):
-    model_class = CartItem
-
     def __init__(self, session: AsyncSession):
         self.session = session
 
@@ -29,14 +27,12 @@ class CartItemRepository(CartItemRepositoryInterface):
 
     async def remove(self, user_id: int, product_id: int) -> None:
         # Directly run a delete query since we don't need to check for cascades or related objects.
-        stmt = delete(self.model_class).where(
-            self.model_class.user_id == user_id, self.model_class.product_id == product_id
-        )
+        stmt = delete(CartItem).where(CartItem.user_id == user_id, CartItem.product_id == product_id)
         await self.session.execute(stmt)
         await self.session.commit()
 
     async def find_all(self, user_id: int) -> list[CartItem]:
-        stmt = select(self.model_class).where(self.model_class.user_id == user_id)
+        stmt = select(CartItem).where(CartItem.user_id == user_id)
         result = await self.session.execute(stmt)
         return result.scalars().all()
 
@@ -44,19 +40,19 @@ class CartItemRepository(CartItemRepositoryInterface):
         """Get cart items with product details via JOIN, using cart item's stored price."""
         stmt = (
             select(
-                self.model_class.user_id,
-                self.model_class.product_id,
-                self.model_class.quantity,
-                self.model_class.price,  # ← Use cart item's price (when added)
-                self.model_class.total,
-                self.model_class.date_created,
-                self.model_class.date_modified,
+                CartItem.user_id,
+                CartItem.product_id,
+                CartItem.quantity,
+                CartItem.price,  # ← Use cart item's price (when added)
+                CartItem.total,
+                CartItem.date_created,
+                CartItem.date_modified,
                 Product.title,
                 Product.sku,
                 Product.price.label("price_product"),  # ← Current product price
             )
-            .join(Product, self.model_class.product_id == Product.id)
-            .where(self.model_class.user_id == user_id)
+            .join(Product, CartItem.product_id == Product.id)
+            .where(CartItem.user_id == user_id)
         )
 
         result = await self.session.execute(stmt)
@@ -79,11 +75,15 @@ class CartItemRepository(CartItemRepositoryInterface):
         ]
 
     async def get_item(self, user_id: int, product_id: int) -> CartItem | None:
-        stmt = select(self.model_class).where(
-            self.model_class.user_id == user_id, self.model_class.product_id == product_id
-        )
+        stmt = select(CartItem).where(CartItem.user_id == user_id, CartItem.product_id == product_id)
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()
+
+    async def has_item(self, user_id: int, product_id: int) -> bool:
+        """Check if a specific item exists in user's cart."""
+        stmt = select(CartItem.user_id).where(CartItem.user_id == user_id, CartItem.product_id == product_id).limit(1)
+        result = await self.session.execute(stmt)
+        return result.scalar_one_or_none() is not None
 
     async def clear_cart(self, user_id: int) -> None:
         await self.session.execute(CartItem.__table__.delete().where(CartItem.user_id == user_id))
@@ -91,7 +91,7 @@ class CartItemRepository(CartItemRepositoryInterface):
 
     async def has_cart_items(self, user_id: int) -> bool:
         """Check if user has any items in their cart."""
-        stmt = select(self.model_class.user_id).where(self.model_class.user_id == user_id).limit(1)
+        stmt = select(CartItem.user_id).where(CartItem.user_id == user_id).limit(1)
 
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none() is not None
