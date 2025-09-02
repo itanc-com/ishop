@@ -23,7 +23,20 @@ class CartItemRepository(CartItemRepositoryInterface):
         self.session.add(cart_item)
         await self.session.commit()
         await self.session.refresh(cart_item)
-        return cart_item
+
+        # Clone to new object with all database-generated fields
+        # to avoid MissingGreenlet errors and detached from session
+        inserted_cart_item = CartItem(
+            user_id=cart_item.user_id,
+            product_id=cart_item.product_id,
+            quantity=cart_item.quantity,
+            price=cart_item.price,
+            total=cart_item.total,
+            date_created=cart_item.date_created,
+            date_modified=cart_item.date_modified,
+        )
+
+        return inserted_cart_item
 
     async def remove(self, user_id: int, product_id: int) -> None:
         # Directly run a delete query since we don't need to check for cascades or related objects.
