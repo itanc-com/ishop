@@ -22,17 +22,24 @@ class AddItemToCart:
 
     async def execute(self, cart_item_create: CartItemCreate) -> CartItemRead | None:
         product: Product | None = await self.product_repository.get_by_id(cart_item_create.product_id)
+
         if not product:
             raise EntityNotFoundException(
                 data={"product_id": cart_item_create.product_id},
                 message=f"Product with id {cart_item_create.product_id} not found",
             )
 
+        # Extract product attributes while session is still active
+        product_title = product.title
+        product_sku = product.sku
+        product_price = float(product.price)
+
         try:
-            existing_cart_item = await self.cart_item_repository.get_item(
+            item_already_in_cart = await self.cart_item_repository.has_item(
                 user_id=cart_item_create.user_id,
                 product_id=cart_item_create.product_id,
             )
+
         except Exception as e:
             raise DatabaseOperationException(
                 operation="select",
@@ -40,19 +47,22 @@ class AddItemToCart:
                 data={"user_id": cart_item_create.user_id, "product_id": cart_item_create.product_id},
             )
 
-        if existing_cart_item:
+        #! it should increase the quantity of the card
+        # * need to call another usecase to increase the quantity of this product in cart
+        if item_already_in_cart:
             raise DuplicateEntryException(field="product_id", value=str(cart_item_create.product_id))
 
-        cart_item: CartItem = self.cart_item_repository.model_class(
-            user_id=cart_item_create.user_id,
-            product_id=cart_item_create.product_id,
-            quantity=cart_item_create.quantity,
-            price=product.price,
-            total=product.price * cart_item_create.quantity,
+        # Create cart item with calculated price and total
+        cart_item_data = CartItem(
+            **cart_item_create.model_dump(),  # Gets user_id, product_id, quantity
+            price=float(product_price),  # Add calculated price from extracted product price
+            total=float(product_price) * cart_item_create.quantity,  # Add calculated total
         )
 
         try:
-            inserted = await self.cart_item_repository.insert(cart_item)
+            # Repository now returns a fresh instance with all auto-generated fields
+            cart_item = await self.cart_item_repository.insert(cart_item_data)
+
         except Exception as e:
             raise DatabaseOperationException(
                 operation="insert",
@@ -61,15 +71,15 @@ class AddItemToCart:
             )
 
         new_cart_item = CartItemRead(
-            user_id=inserted.user_id,
-            product_id=inserted.product_id,
-            quantity=inserted.quantity,
-            title=product.title,
-            sku=product.sku,
-            price=inserted.price,
-            total=inserted.total,
-            date_created_gmt=inserted.date_created,
-            date_modified_gmt=inserted.date_modified,
+            user_id=cart_item.user_id,
+            product_id=cart_item.product_id,
+            quantity=cart_item.quantity,
+            title=product_title,  # Use extracted title instead of product.title
+            sku=product_sku,  # Use extracted sku instead of product.sku
+            price=cart_item.price,
+            total=cart_item.total,
+            date_created_gmt=cart_item.date_created,
+            date_modified_gmt=cart_item.date_modified,
         )
 
         return new_cart_item
