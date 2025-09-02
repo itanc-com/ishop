@@ -21,9 +21,9 @@ class CategoryRepository(CategoryRepositoryInterface):
         return result.scalar_one_or_none()
 
     async def list_all(self, parent_id: int = 0) -> list[Category]:
-        query = select(Category).filter(Category.parent_id == parent_id)
+        query = select(Category).where(Category.parent_id == parent_id)
         result = await self.session.execute(query)
-        return list(result.scalars().all())
+        return result.scalars().all()
 
     async def delete(self, category: Category) -> None:
         await self.session.delete(category)
