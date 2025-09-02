@@ -20,6 +20,7 @@ class RemoveItemFromCart:
             raise EntityNotFoundException(
                 data={"user_id": user_id, "product_id": product_id},
                 message=f"Item {product_id} for user with Id {user_id} is not found",
+            )
 
         try:
             await self.cart_item_repository.remove(user_id=user_id, product_id=product_id)
