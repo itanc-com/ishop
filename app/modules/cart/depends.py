@@ -10,6 +10,6 @@ from .repository_interface import CartItemRepositoryInterface
 
 
 def get_cartitem_repository(
-        db_session: Annotated[AsyncSession, Depends(get_db_session)]
+    db_session: Annotated[AsyncSession, Depends(get_db_session)]
 ) -> CartItemRepositoryInterface:
     return CartItemRepository(db_session)

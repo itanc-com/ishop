@@ -113,11 +113,11 @@ async def clear_cart(
 )
 async def add_item(
     request: Request,
-    item_schema: CartItemCreate,
+    cart_item_create: CartItemCreate,
     cartitem_repository: Annotated[CartItemRepositoryInterface, Depends(get_cartitem_repository)],
     product_repository: Annotated[ProductRepositoryInterface, Depends(get_product_repository)],
 ) -> SuccessResponse[CartItemRead]:
-    item_read = await AddItemToCart(cartitem_repository, product_repository).execute(item_schema)
+    item_read = await AddItemToCart(cartitem_repository, product_repository).execute(cart_item_create)
     result = SuccessResult[CartItemRead](
         code=SuccessCodes.CREATED,
         message="Item added to cart successfully",

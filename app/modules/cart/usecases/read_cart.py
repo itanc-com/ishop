@@ -1,5 +1,3 @@
-from sqlalchemy.exc import SQLAlchemyError
-
 from app.common.exceptions.app_exceptions import DatabaseOperationException
 from app.modules.cart.repository_interface import CartItemRepositoryInterface
 
@@ -12,23 +10,27 @@ class ReadCart:
 
     async def execute(self, user_id: int) -> CartRead | None:
         try:
-            cart_items = await self.cart_item_repository.find_all(user_id)
-        except SQLAlchemyError as e:
-            raise DatabaseOperationException(operation="read", message=str(e), data={"user_id": user_id})
+            cart_items_dtos = await self.cart_item_repository.find_all_with_products(user_id)
+        except Exception as e:
+            raise DatabaseOperationException(operation="select", message=str(e), data={"user_id": user_id})
 
         items_read: list[CartItemRead] = [
             CartItemRead(
-                user_id=cart_item.user_id,
-                product_id=cart_item.product_id,
-                quantity=cart_item.quantity,
-                title=getattr(cart_item, "title", ""),
-                sku=getattr(cart_item, "sku", ""),
-                price=getattr(cart_item, "price", 0.0),
-                total=getattr(cart_item, "total", 0.0),
-                date_created_gmt=getattr(cart_item, "date_created", None),
-                date_modified_gmt=getattr(cart_item, "date_modified", None),
+                user_id=dto.user_id,
+                product_id=dto.product_id,
+                quantity=dto.quantity,
+                title=dto.title,
+                sku=dto.sku,
+                price=dto.price_cart,
+                total=dto.total,
+                date_created_gmt=dto.date_created,
+                date_modified_gmt=dto.date_modified,
             )
-            for cart_item in cart_items
+            for dto in cart_items_dtos
         ]
 
-        return CartRead(items=items_read)
+        if not items_read:
+            return None
+
+        cart_read = CartRead(items=items_read)
+        return cart_read

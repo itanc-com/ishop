@@ -41,7 +41,10 @@ class ProductRepository:
         return product
 
     async def get_by_id(self, product_id: int) -> Product | None:
-        return await self.session.get(Product, product_id)
+        # More explicit query with all columns
+        stmt = select(Product).where(Product.id == product_id)
+        result = await self.session.execute(stmt)
+        return result.scalar_one_or_none()
 
     async def list_all(self, category_id: int | None = None, skip: int = 0, limit: int = 10) -> list[Product]:
         query = select(Product)
