@@ -99,7 +99,8 @@ class CartItemRepository(CartItemRepositoryInterface):
         return result.scalar_one_or_none() is not None
 
     async def clear_cart(self, user_id: int) -> None:
-        await self.session.execute(CartItem.__table__.delete().where(CartItem.user_id == user_id))
+        stmt = delete(CartItem).where(CartItem.user_id == user_id)
+        await self.session.execute(stmt)
         await self.session.commit()
 
     async def has_cart_items(self, user_id: int) -> bool:
