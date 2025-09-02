@@ -9,6 +9,7 @@ from app.modules.product.repository_interface import ProductRepositoryInterface
 
 from ..models import CartItem
 from ..schemas import CartItemCreate, CartItemRead
+from ..models import CartItem
 
 
 class AddItemToCart:

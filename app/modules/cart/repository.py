@@ -9,6 +9,8 @@ from .repository_interface import CartItemRepositoryInterface
 
 
 class CartItemRepository(CartItemRepositoryInterface):
+    model_class = CartItem
+
     def __init__(self, session: AsyncSession):
         self.session = session
 
@@ -18,6 +20,7 @@ class CartItemRepository(CartItemRepositoryInterface):
         for cart_item in cart_items:
             await self.session.refresh(cart_item)
         return cart_items
+
 
     async def insert(self, cart_item: CartItem) -> CartItem:
         self.session.add(cart_item)
@@ -109,3 +112,4 @@ class CartItemRepository(CartItemRepositoryInterface):
 
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none() is not None
+
