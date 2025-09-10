@@ -9,6 +9,5 @@ def unique_user_data():
     user_data = {
         "email": f"testuser_{unique_suffix}@example.com",
         "password": "StrongPass123!",
-        "username": f"testuser_{unique_suffix}"
     }
     return user_data
