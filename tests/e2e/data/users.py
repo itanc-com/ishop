@@ -7,4 +7,8 @@ USERS = {
         "email": "weak@example.com",
         "password": "123",
     },
+    "invalid_email": {
+        "email": "invalid-email",
+        "password": "StrongPass123!",
+    },
 }
