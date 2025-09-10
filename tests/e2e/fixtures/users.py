@@ -1,13 +1,12 @@
-import uuid
-
 import pytest
+
+from ..data.users import USERS
 
 
 @pytest.fixture
-def unique_user_data():
-    unique_suffix = str(uuid.uuid4())[:8]
-    user_data = {
-        "email": f"testuser_{unique_suffix}@example.com",
-        "password": "StrongPass123!",
-    }
-    return user_data
+def normal_user_data():
+    return USERS["normal"]
+
+@pytest.fixture
+def weak_password_user_data():
+    return USERS["weak_password"]
