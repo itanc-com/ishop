@@ -8,4 +8,4 @@
 
 # create a permenent product
 # do not delete the permenent product
-# if the permenent category is exist do not create it again
+# if the permenent product is exist do not create it again
