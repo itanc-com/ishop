@@ -1,14 +1,14 @@
-USERS = {
-    "normal": {
-        "email": "user@example.com",
-        "password": "UserPass123!",
-    },
-    "weak_password": {
-        "email": "weak@example.com",
-        "password": "123",
-    },
-    "invalid_email": {
-        "email": "invalid-email",
-        "password": "StrongPass123!",
-    },
+USER_NORMAL = {
+    "email": "user@example.com",
+    "password": "UserPass123!",
+}
+
+USER_WEAK_PASSWORD = {
+    "email": "weak@example.com",
+    "password": "123",
+}
+
+USER_INVALID_EMAIL = {
+    "email": "invalid",
+    "password": "StrongPass123!",
 }
