@@ -3,9 +3,8 @@ from logging import Logger
 import pytest
 from playwright.sync_api import APIRequestContext
 
+from tests.e2e.data.users import USER_NORMAL
 from tests.e2e.routes_api_v1.users import post_register_user
-
-from ..data.users import USER_NORMAL
 
 
 @pytest.mark.order(1)
