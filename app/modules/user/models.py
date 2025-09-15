@@ -15,6 +15,7 @@ class UserStatus(IntEnum):
     ACTIVE = 1
     VERIFIED = 2
     SUSPEND = 3
+    DELETE = 4
 
 
 class User(Base):
