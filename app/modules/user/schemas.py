@@ -6,66 +6,37 @@ from .models import UserRole, UserStatus
 
 
 class UserBase(BaseModel):
-    first_name: str | None = Field(None, max_length=255, description="User's first name", examples=["John"])
-    last_name: str | None = Field(None, max_length=255, description="User's last name", examples=["Doe"])
-    email: EmailStr = Field(..., description="User's unique email address", examples=["john.doe@example.com"])
-    picture: str | None = Field(
-        None,
-        description="URL or path to user's profile picture",
-        examples=["https://example.com/photos/123.jpg"],
-    )
-    role: UserRole = Field(default=UserRole.USER, description="Role of the user, e.g. 0, 1 and etc", examples=[0])
-    status: UserStatus = Field(
-        default=UserStatus.DEACTIVE,
-        description="Current status of the user account",
-        examples=[0],
-    )
-    phone: str | None = Field(None, description="User's phone number", examples=["+15555550123"])
-    address: str | None = Field(None, description="User's physical address", examples=["123 Main St, City, Country"])
+    first_name: str | None = Field(None, max_length=255, description="User's first name")
+    last_name: str | None = Field(None, max_length=255, description="User's last name")
+    email: EmailStr = Field(..., description="User's unique email address")
+    picture: str | None = Field(None, description="URL or path to user's profile picture")
+    role: UserRole = Field(default=UserRole.USER, description="Role of the user")
+    status: UserStatus = Field(default=UserStatus.DEACTIVE, description="Current user status")
+    phone: str | None = Field(None, description="User's phone number")
+    address: str | None = Field(None, description="User's physical address")
 
-    class Config:
-        use_enum_values = True
+    model_config = {"use_enum_values": True}
 
 
 class UserCreate(UserBase):
-    password: str = Field(
-        ...,
-        min_length=8,
-        description="User's account password (min 8 characters)",
-        examples=["StrongP@ss123"],
-    )
+    password: str = Field(..., min_length=8, description="User password (min 8 characters)")
 
 
 class UserUpdate(BaseModel):
-    first_name: str | None = Field(None, description="Updated first name", examples=["Jane"])
-    last_name: str | None = Field(None, description="Updated last name", examples=["Smith"])
-    email: EmailStr | None = Field(None, description="Updated email", examples=["jane.smith@example.com"])
-    password: str | None = Field(None, min_length=8, description="Updated password", examples=["NewP@ss456"])
-    picture: str | None = Field(
-        None,
-        description="Updated profile picture URL",
-        examples=["https://example.com/photos/456.jpg"],
-    )
-    role: UserRole | None = Field(None, description="Updated user role", examples=[1])
-    status: UserStatus | None = Field(None, description="Updated user status", examples=[1])
-    phone: str | None = Field(None, description="Updated phone number", examples=["+15555550456"])
-    address: str | None = Field(None, description="Updated address", examples=["456 Oak Ave, City, Country"])
+    first_name: str | None = None
+    last_name: str | None = None
+    email: EmailStr | None = None
+    password: str | None = Field(None, min_length=8)
+    picture: str | None = None
+    role: UserRole | None = None
+    status: UserStatus | None = None
+    phone: str | None = None
+    address: str | None = None
 
 
 class UserRead(UserBase):
-    id: int = Field(..., description="Unique ID of the user", examples=[1])
-    role: UserRole | None = Field(None, description="Updated user role", examples=[1])
+    id: int
+    date_created: datetime
+    date_modified: datetime
 
-    date_created: datetime = Field(
-        ...,
-        description="Timestamp when the user was created",
-        examples=["2023-01-01T00:00:00"],
-    )
-    date_modified: datetime = Field(
-        ...,
-        description="Timestamp when the user was last updated",
-        examples=["2023-01-01T12:30:00"],
-    )
-
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True, "use_enum_values": True}

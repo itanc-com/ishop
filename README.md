@@ -1,8 +1,7 @@
 # iShop – E-commerce API with FastAPI Framework
 
-## A simple and lightweight e-commerce API built with FastAPI for managing online sales and inventory.
+### A simple and lightweight e-commerce API built with FastAPI for managing online sales and inventory.
 
----
 
 ## 🚀 Features
 
@@ -12,6 +11,20 @@
 - Suitable for small-scale eCommerce projects
 
 [🗂️ View iShop Database Diagram on dbdiagram.io](https://dbdiagram.io/d/iShop-68252d1f5b2fc4582fa8803d)
+
+---
+
+
+## Project Architecture
+
+Each module (user, product, etc.) follows Clean Architecture principles:
+
+- `models.py`: Domain entities (database models)
+- `schemas.py`: API schemas (Pydantic)
+- `repository.py`: Data access layer
+- `repository_interface.py`: Abstraction for repository
+- `usecases/`: Business/application logic (core use cases)
+- `routers.py`: API endpoints
 
 ---
 
@@ -127,7 +140,7 @@ It's typically used to separate environment-specific settings from the applicati
 **filename : app/.env**
 
 ```
-ENVIRONMENT='DEV' # environment variable permitted: 'DEV', 'PROD', 'TEST'
+ENVIRONMENT='development' # environment variable permitted: 'development', 'production', 'test'
 DATABASE_URI="sqlite:///./app/db/db.sqlite3"
 JWT_ISSUER_SERVER="localhost:8000"
 JWT_SECRET_KEY="your_secure_key"

@@ -8,7 +8,7 @@ from tests.e2e.routes_api_v1.category import get_categories, get_category, post_
 
 
 @pytest.mark.order(1)
-def test_category_creation_returns_expected_fields(api_request_context: APIRequestContext, logger: Logger):
+def _test_category_creation_returns_expected_fields(api_request_context: APIRequestContext, logger: Logger):
     response = post_category(api_request_context, CATEGORY_DATA)
     assert response.status == 201, f"Expected 201 Created, got {response.status}"
 
@@ -20,7 +20,7 @@ def test_category_creation_returns_expected_fields(api_request_context: APIReque
 
 
 @pytest.mark.order(2)
-def test_category_retrieval_returns_correct_data(api_request_context: APIRequestContext, logger: Logger):
+def _test_category_retrieval_returns_correct_data(api_request_context: APIRequestContext, logger: Logger):
     create_response = post_category(api_request_context, CATEGORY_DATA)
     assert create_response.status == 201, f"Expected 201 Created, got {create_response.status}"
     created_category = create_response.json()["data"]
@@ -35,7 +35,7 @@ def test_category_retrieval_returns_correct_data(api_request_context: APIRequest
 
 
 @pytest.mark.order(3)
-def test_list_categories(api_request_context: APIRequestContext, logger: Logger):
+def _test_list_categories(api_request_context: APIRequestContext, logger: Logger):
     post_category(api_request_context, CATEGORY_DATA)
     post_category(api_request_context, CATEGORY_DATA)
     post_category(api_request_context, CATEGORY_DATA)

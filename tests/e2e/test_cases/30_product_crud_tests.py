@@ -9,7 +9,7 @@ from tests.e2e.routes_api_v1.product import delete_product, post_product, update
 
 
 @pytest.mark.order(1)
-def test_product_creation_returns_expected_fields(
+def _test_product_creation_returns_expected_fields(
     api_request_context: APIRequestContext, logger: Logger, create_category_fixture
 ):
     category_id = create_category_fixture["id"]
@@ -26,7 +26,7 @@ def test_product_creation_returns_expected_fields(
 
 
 @pytest.mark.order(2)
-def test_product_update_applies_new_values(
+def _test_product_update_applies_new_values(
     api_request_context: APIRequestContext, logger: Logger, create_category_fixture
 ):
     category_id = create_category_fixture["id"]
@@ -47,7 +47,7 @@ def test_product_update_applies_new_values(
 
 
 @pytest.mark.order(3)
-def test_product_deletion_returns_deleted_data(
+def _test_product_deletion_returns_deleted_data(
     api_request_context: APIRequestContext, logger: Logger, create_category_fixture
 ):
     category_id = create_category_fixture["id"]

@@ -4,10 +4,10 @@ from app.db.base import Base
 
 
 class CartItem(Base):
-    __tablename__ = "tbl_cart_items"
+    __tablename__ = "cart_items"
 
-    user_id = Column(Integer, ForeignKey("tbl_users.id"), primary_key=True, index=True)
-    product_id = Column(Integer, ForeignKey("tbl_products.id"), primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), primary_key=True, index=True)
+    product_id = Column(Integer, ForeignKey("products.id"), primary_key=True, index=True)
     quantity = Column(Integer, default=1, nullable=False)
     price = Column(Float, default=0.0, nullable=False)
     total = Column(Integer, default=0, nullable=False)
