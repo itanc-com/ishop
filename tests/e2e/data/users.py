@@ -1,5 +1,5 @@
 USER_NORMAL = {
-    "email": "user@example.com",
+    "email": "test_user@example.com",
     "password": "UserPass123!",
 }
 

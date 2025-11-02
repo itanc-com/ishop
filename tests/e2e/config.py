@@ -1,3 +1,4 @@
 # Define global variables or constants
-SERVER_URL = "http://127.0.0.1:5001"
-API_URL_V1 = SERVER_URL + "/v1"
+SERVER_HOST = "127.0.0.1"
+SERVER_PORT = 8000
+API_URL_V1 = f"http://{SERVER_HOST}:{SERVER_PORT}/v1"

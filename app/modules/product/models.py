@@ -15,10 +15,10 @@ from app.db.base import Base
 
 
 class Product(Base):
-    __tablename__ = "tbl_products"
+    __tablename__ = "products"
 
     id = Column(Integer, primary_key=True)
-    category_id = Column(Integer, ForeignKey("tbl_categories.id"), index=True)
+    category_id = Column(Integer, ForeignKey("categories.id"), index=True)
     title = Column(String(255), nullable=False)
     description = Column(Text, nullable=False)
     sku = Column(Text, unique=True, nullable=False)

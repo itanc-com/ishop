@@ -5,10 +5,10 @@ from app.db.base import Base
 
 
 class Category(Base):
-    __tablename__ = "tbl_categories"
+    __tablename__ = "categories"
 
     id = Column(Integer, primary_key=True)
-    parent_id = Column(Integer, ForeignKey("tbl_categories.id"), index=True, default=0)
+    parent_id = Column(Integer, ForeignKey("categories.id"), index=True, default=0)
     title = Column(String(255), index=True)
     date_created = Column(DateTime, default=func.now())
     date_modified = Column(DateTime, default=func.now(), onupdate=func.now())

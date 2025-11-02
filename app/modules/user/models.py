@@ -19,7 +19,7 @@ class UserStatus(IntEnum):
 
 
 class User(Base):
-    __tablename__ = "tbl_users"
+    __tablename__ = "users"
 
     id = Column(Integer, primary_key=True)
     first_name = Column(String(255), nullable=True)

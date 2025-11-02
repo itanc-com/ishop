@@ -17,5 +17,9 @@ class UserRepositoryInterface(ABC):
         pass
 
     @abstractmethod
-    async def get_by_id(self, user_id: int | str) -> User | None:
+    async def get_by_id(self, user_id: int) -> User | None:
+        pass
+
+    @abstractmethod
+    async def delete_by_id(self, user_id: int) -> User | None:
         pass
