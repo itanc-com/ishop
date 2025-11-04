@@ -17,7 +17,7 @@ class ProductRepository:
 
         return product
 
-    async def update(self, product_id: int, updated_product: Product) -> Product | None:
+    async def update_by_id(self, product_id: int, updated_product: Product) -> Product | None:
         product = await self.session.get(Product, product_id)
         if not product:
             return None
@@ -30,7 +30,7 @@ class ProductRepository:
         await self.session.refresh(product)
         return product
 
-    async def delete(self, product_id: int) -> Product | None:
+    async def delete_by_id(self, product_id: int) -> Product | None:
         product = await self.session.get(Product, product_id)
 
         if not product:
@@ -41,10 +41,7 @@ class ProductRepository:
         return product
 
     async def get_by_id(self, product_id: int) -> Product | None:
-        # More explicit query with all columns
-        stmt = select(Product).where(Product.id == product_id)
-        result = await self.session.execute(stmt)
-        return result.scalar_one_or_none()
+        return await self.session.get(Product, product_id)
 
     async def list_all(self, category_id: int | None = None, skip: int = 0, limit: int = 10) -> list[Product]:
         query = select(Product)

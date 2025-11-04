@@ -1,17 +1,16 @@
 from app.common.exceptions.app_exceptions import DatabaseOperationException, EntityNotFoundException
+from app.modules.product.models import Product
 from app.modules.product.repository_interface import ProductRepositoryInterface
-from app.modules.product.schemas import ProductRead
+from app.modules.product.schemas import ProductOutRead
 
 
 class ProductDelete:
     def __init__(self, product_repository: ProductRepositoryInterface) -> None:
         self.product_repository = product_repository
 
-    async def execute(self, product_id: int) -> ProductRead:
-        product = None
-
+    async def execute(self, product_id: int) -> ProductOutRead:
         try:
-            product = await self.product_repository.delete(product_id)
+            product: Product | None = await self.product_repository.delete_by_id(product_id)
         except Exception as e:
             raise DatabaseOperationException(operation="delete", message=str(e), data={"product_id": product_id})
 
@@ -20,4 +19,4 @@ class ProductDelete:
                 data={"product_id": product_id}, message=f"Product with ID {product_id} not found."
             )
 
-        return ProductRead.model_validate(product)
+        return ProductOutRead.model_validate(product, by_name=True)
