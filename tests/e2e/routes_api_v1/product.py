@@ -20,5 +20,13 @@ def delete_product(api_request_context: APIRequestContext, product_id) -> APIRes
     return api_request_context.delete(f"{API_URL_V1}/products/{product_id}", headers=HEADER_JSON)
 
 
-def list_products(api_request_context: APIRequestContext) -> APIResponse:
-    return api_request_context.get(f"{API_URL_V1}/products", headers=HEADER_JSON)
+def list_paginated_products(api_request_context: APIRequestContext, page: int, limit: int) -> APIResponse:
+    return api_request_context.get(f"{API_URL_V1}/products", headers=HEADER_JSON, params={"page": page, "limit": limit})
+
+
+def list_paginated_products_per_category(
+    api_request_context: APIRequestContext, category_id: int, page: int, limit: int
+) -> APIResponse:
+    return api_request_context.get(
+        f"{API_URL_V1}/products", headers=HEADER_JSON, params={"category_id": category_id, "page": page, "limit": limit}
+    )

@@ -5,11 +5,11 @@ from fastapi import APIRouter, Depends, Request, status
 from app.common.http_response.doc_responses import ResponseErrorDoc, ResponseSuccessDoc
 from app.common.http_response.success_response import SuccessCodes, SuccessResponse
 from app.common.http_response.success_result import SuccessResult
-from app.modules.product.schemas import ProductInCreate, ProductInUpdate, ProductOutRead
+from app.modules.product.schemas import ProductInCreate, ProductInUpdate, ProductOutPaginated, ProductOutRead
 from app.modules.product.usecases.create import ProductCreate
 from app.modules.product.usecases.delete import ProductDelete
 from app.modules.product.usecases.get_by_id import ProductGetById
-from app.modules.product.usecases.list_all import ProductListAll
+from app.modules.product.usecases.list_paginated import ProductListPaginated
 from app.modules.product.usecases.update import ProductUpdate
 
 from .depends import get_product_repository
@@ -109,12 +109,23 @@ async def delete_product(
     return result.to_json_response(request)
 
 
-@router.get("/", response_model=list[ProductOutRead])
+@router.get("/", response_model=SuccessResponse[ProductOutPaginated])
 async def list_all_products(
+    request: Request,
     product_repository: Annotated[ProductRepositoryInterface, Depends(get_product_repository)],
     category_id: int | None = None,
     page: int = 1,
-    per_page: int = 10,
-) -> list[ProductOutRead]:
-    products = await ProductListAll(product_repository).execute(category_id=category_id, page=page, per_page=per_page)
-    return products
+    limit: int = 10,
+) -> SuccessResponse[ProductOutPaginated]:
+    product_list_paginated = await ProductListPaginated(product_repository).execute(
+        category_id=category_id, page=page, limit=limit
+    )
+
+    result = SuccessResult[ProductOutPaginated](
+        code=SuccessCodes.SUCCESS,
+        message=f"{product_list_paginated.pagination.total_items} item(s) are listed successfully",
+        status_code=status.HTTP_200_OK,
+        data=product_list_paginated,
+    )
+
+    return result.to_json_response(request)

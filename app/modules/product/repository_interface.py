@@ -28,3 +28,7 @@ class ProductRepositoryInterface(ABC):
     @abstractmethod
     async def exists_by_field(self, field: str, value: Any) -> bool:
         pass
+
+    @abstractmethod
+    async def count_all(self, category_id: int | None = None) -> int:
+        pass

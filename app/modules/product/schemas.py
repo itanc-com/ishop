@@ -55,7 +55,7 @@ class ProductOutRead(ProductBase):
     model_config = {"from_attributes": True}
 
 
-class ProductOutList(BaseModel):
+class ProductOutPaginated(BaseModel):
     """
     Used for listing products with pagination support.
     Contains a list of ProductOutRead items and pagination metadata.

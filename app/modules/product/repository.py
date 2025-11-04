@@ -1,6 +1,6 @@
 from typing import Any
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .models import Product
@@ -58,3 +58,13 @@ class ProductRepository:
         stmt = select(Product).where(getattr(Product, field) == value)
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none() is not None
+
+    async def count_all(self, category_id: int | None = None) -> int:
+        """Count total products with optional category filter."""
+        query = select(func.count(Product.id))
+
+        if category_id is not None:
+            query = query.where(Product.category_id == category_id)
+
+        result = await self.session.execute(query)
+        return result.scalar() or 0
