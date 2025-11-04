@@ -84,6 +84,7 @@ async def get_user_by_id(
     responses={
         **ResponseSuccessDoc.HTTP_200_OK("User fetched successfully", UserRead),
         **ResponseErrorDoc.HTTP_404_NOT_FOUND("User not found"),
+        **ResponseErrorDoc.HTTP_500_INTERNAL_SERVER_ERROR("Internal server error"),
     },
 )
 async def get_user_by_email(
@@ -110,6 +111,7 @@ async def get_user_by_email(
     responses={
         **ResponseSuccessDoc.HTTP_200_OK("User deleted successfully", UserRead),
         **ResponseErrorDoc.HTTP_404_NOT_FOUND("User not found"),
+        **ResponseErrorDoc.HTTP_500_INTERNAL_SERVER_ERROR("Internal server error"),
     },
 )
 async def user_delete(
@@ -136,6 +138,7 @@ async def user_delete(
     responses={
         **ResponseSuccessDoc.HTTP_200_OK("User deleted successfully", UserRead),
         **ResponseErrorDoc.HTTP_404_NOT_FOUND("User not found"),
+        **ResponseErrorDoc.HTTP_500_INTERNAL_SERVER_ERROR("Internal server error"),
     },
 )
 async def user_delete_by_email(
