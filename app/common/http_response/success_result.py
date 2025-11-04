@@ -41,12 +41,3 @@ class SuccessResult(Generic[T]):
             status_code=self.status_code,
             content=model.model_dump(mode="json"),
         )
-
-
-#! TODO: Remove this function and use the to_json_response method instead
-def success_response_builder(result: SuccessResult[T], request: Request) -> JSONResponse:
-    model = result.to_response_model(path=request.url.path)
-    return JSONResponse(
-        status_code=result.status_code,
-        content=model.model_dump(mode="json"),
-    )
