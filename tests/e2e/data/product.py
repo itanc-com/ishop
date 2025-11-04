@@ -121,7 +121,7 @@ LIST_PRODUCT = [
     {
         "category_id": 3,
         "title": "Noise Cancelling Earbuds",
-        "description": "Compact True wireless earbuds with ANC support.",
+        "description": "Compact true wireless earbuds with ANC support.",
         "sku": "SKU-P012",
         "price": 200,
         "is_available": True,
