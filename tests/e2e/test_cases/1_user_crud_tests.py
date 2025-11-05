@@ -8,12 +8,12 @@ from tests.e2e.routes_api_v1.users import post_register_user
 
 
 @pytest.mark.order(1)
-def test_create_user_success(api_request_context: APIRequestContext, logger: Logger):
+def test_register_user_success(api_request_context: APIRequestContext, logger: Logger):
     response = post_register_user(api_request_context, USER_NORMAL)
     code = response.json().get("code")
-    logger.info(response.json().get("message"))
     assert response.status == 201, f"Expected 201 Created, got {response.status}"
     assert code == "CREATED", f"Expected code 'CREATED', got {code}"
+    logger.info(response.json().get("message"))
 
 
 @pytest.mark.order(2)

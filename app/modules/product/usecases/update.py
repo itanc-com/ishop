@@ -1,15 +1,15 @@
 from app.common.exceptions.app_exceptions import DatabaseOperationException, EntityNotFoundException
 from app.modules.product.repository_interface import ProductRepositoryInterface
-from app.modules.product.schemas import ProductRead, ProductUpdate
+from app.modules.product.schemas import ProductInUpdate, ProductOutRead
 
 
-class ProductEdit:
+class ProductUpdate:
     def __init__(self, product_repository: ProductRepositoryInterface) -> None:
         self.product_repository = product_repository
 
-    async def execute(self, product_id: int, product_update: ProductUpdate) -> ProductRead:
+    async def execute(self, product_id: int, product_update: ProductInUpdate) -> ProductOutRead:
         try:
-            product = await self.product_repository.update(product_id, product_update)
+            product = await self.product_repository.update_by_id(product_id, product_update)
             if not product:
                 raise EntityNotFoundException(
                     data={"product_id": product_id},
@@ -18,4 +18,4 @@ class ProductEdit:
         except Exception as e:
             raise DatabaseOperationException(operation="delete", message=str(e), data={"product_id": product_id})
 
-        return ProductRead.model_validate(product)
+        return ProductOutRead.model_validate(product)

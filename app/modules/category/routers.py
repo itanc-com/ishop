@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Request, status
 from fastapi.responses import JSONResponse
 
-from app.common.http_response.doc_reponses import ResponseErrorDoc, ResponseSuccessDoc
+from app.common.http_response.doc_responses import ResponseErrorDoc, ResponseSuccessDoc
 from app.common.http_response.success_response import SuccessCodes, SuccessResponse
 from app.common.http_response.success_result import SuccessResult
 from app.modules.category.depends import get_category_repository

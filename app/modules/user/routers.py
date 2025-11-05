@@ -3,9 +3,9 @@ from typing import Annotated
 from fastapi import APIRouter, Request, status
 from fastapi.params import Depends
 
-from app.common.http_response.doc_reponses import ResponseErrorDoc, ResponseSuccessDoc
+from app.common.http_response.doc_responses import ResponseErrorDoc, ResponseSuccessDoc
 from app.common.http_response.success_response import SuccessCodes, SuccessResponse
-from app.common.http_response.success_result import SuccessResult, success_response_builder
+from app.common.http_response.success_result import SuccessResult
 from app.modules.user.usecases.user_get_by_id import UserGetById
 
 from .depends import get_user_repository
@@ -48,7 +48,7 @@ async def user_register(
         data=user_read,
     )
 
-    return success_response_builder(result, request)
+    return result.to_json_response(request)
 
 
 @router.get(
@@ -74,7 +74,7 @@ async def get_user_by_id(
         status_code=status.HTTP_200_OK,
         data=user_read,
     )
-    return success_response_builder(result, request)
+    return result.to_json_response(request)
 
 
 @router.get(
@@ -84,6 +84,7 @@ async def get_user_by_id(
     responses={
         **ResponseSuccessDoc.HTTP_200_OK("User fetched successfully", UserRead),
         **ResponseErrorDoc.HTTP_404_NOT_FOUND("User not found"),
+        **ResponseErrorDoc.HTTP_500_INTERNAL_SERVER_ERROR("Internal server error"),
     },
 )
 async def get_user_by_email(
@@ -100,7 +101,7 @@ async def get_user_by_email(
         status_code=status.HTTP_200_OK,
         data=user_read,
     )
-    return success_response_builder(result, request)
+    return result.to_json_response(request)
 
 
 @router.delete(
@@ -110,6 +111,7 @@ async def get_user_by_email(
     responses={
         **ResponseSuccessDoc.HTTP_200_OK("User deleted successfully", UserRead),
         **ResponseErrorDoc.HTTP_404_NOT_FOUND("User not found"),
+        **ResponseErrorDoc.HTTP_500_INTERNAL_SERVER_ERROR("Internal server error"),
     },
 )
 async def user_delete(
@@ -126,7 +128,7 @@ async def user_delete(
         data=UserRead.model_validate(user_read),
     )
 
-    return success_response_builder(result, request)
+    return result.to_json_response(request)
 
 
 @router.delete(
@@ -136,6 +138,7 @@ async def user_delete(
     responses={
         **ResponseSuccessDoc.HTTP_200_OK("User deleted successfully", UserRead),
         **ResponseErrorDoc.HTTP_404_NOT_FOUND("User not found"),
+        **ResponseErrorDoc.HTTP_500_INTERNAL_SERVER_ERROR("Internal server error"),
     },
 )
 async def user_delete_by_email(
@@ -152,4 +155,4 @@ async def user_delete_by_email(
         data=UserRead.model_validate(user_read),
     )
 
-    return success_response_builder(result, request)
+    return result.to_json_response(request)

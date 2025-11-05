@@ -2,6 +2,8 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
+from app.common.schemas.pagination import PaginationInfo
+
 
 class ProductBase(BaseModel):
     category_id: int = Field(..., example=1)
@@ -22,7 +24,7 @@ class ProductInCreate(ProductBase):
     pass
 
 
-class ProductUpdate(ProductBase):
+class ProductInUpdate(ProductBase):
     """
     Used for updating a product.
     Typically, the `id` is passed via path param, not the schema body.
@@ -31,7 +33,7 @@ class ProductUpdate(ProductBase):
     pass
 
 
-class ProductRead(ProductBase):
+class ProductOutRead(ProductBase):
     """
     Used for reading product data.
     Includes `id`, `date_created`, and `date_modified`.
@@ -50,5 +52,16 @@ class ProductRead(ProductBase):
         examples=["2023-01-01T12:30:00"],
     )
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
+
+
+class ProductOutPaginated(BaseModel):
+    """
+    Used for listing products with pagination support.
+    Contains a list of ProductOutRead items and pagination metadata.
+    """
+
+    items: list[ProductOutRead] = Field(..., description="List of products")
+    pagination: PaginationInfo = Field(..., description="Pagination information")
+
+    model_config = {"from_attributes": True}

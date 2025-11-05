@@ -1,6 +1,6 @@
 from typing import Any
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .models import Product
@@ -17,7 +17,7 @@ class ProductRepository:
 
         return product
 
-    async def update(self, product_id: int, updated_product: Product) -> Product | None:
+    async def update_by_id(self, product_id: int, updated_product: Product) -> Product | None:
         product = await self.session.get(Product, product_id)
         if not product:
             return None
@@ -30,7 +30,7 @@ class ProductRepository:
         await self.session.refresh(product)
         return product
 
-    async def delete(self, product_id: int) -> Product | None:
+    async def delete_by_id(self, product_id: int) -> Product | None:
         product = await self.session.get(Product, product_id)
 
         if not product:
@@ -41,10 +41,7 @@ class ProductRepository:
         return product
 
     async def get_by_id(self, product_id: int) -> Product | None:
-        # More explicit query with all columns
-        stmt = select(Product).where(Product.id == product_id)
-        result = await self.session.execute(stmt)
-        return result.scalar_one_or_none()
+        return await self.session.get(Product, product_id)
 
     async def list_all(self, category_id: int | None = None, skip: int = 0, limit: int = 10) -> list[Product]:
         query = select(Product)
@@ -61,3 +58,13 @@ class ProductRepository:
         stmt = select(Product).where(getattr(Product, field) == value)
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none() is not None
+
+    async def count_all(self, category_id: int | None = None) -> int:
+        """Count total products with optional category filter."""
+        query = select(func.count(Product.id))
+
+        if category_id is not None:
+            query = query.where(Product.category_id == category_id)
+
+        result = await self.session.execute(query)
+        return result.scalar() or 0

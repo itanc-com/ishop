@@ -10,11 +10,11 @@ class ProductRepositoryInterface(ABC):
         pass
 
     @abstractmethod
-    async def update(self, product_id: int, updated_product: Product) -> Product:
+    async def update_by_id(self, product_id: int, updated_product: Product) -> Product:
         pass
 
     @abstractmethod
-    async def delete(self, product_id: int) -> Product | None:
+    async def delete_by_id(self, product_id: int) -> Product | None:
         pass
 
     @abstractmethod
@@ -27,4 +27,8 @@ class ProductRepositoryInterface(ABC):
 
     @abstractmethod
     async def exists_by_field(self, field: str, value: Any) -> bool:
+        pass
+
+    @abstractmethod
+    async def count_all(self, category_id: int | None = None) -> int:
         pass

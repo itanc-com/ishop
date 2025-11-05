@@ -9,7 +9,7 @@ class ServiceName(StrEnum):
     AUTH_SERVICE = "auth_service"
     API_ROUTERS = "api_routers"
     REDIS_SERVICE = "redis_service"
-    TEST_SERVICE = "test_service"
+    E2E_TEST_SERVICE = "e2e_test_service"
     # Add more services as needed
 
 

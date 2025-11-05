@@ -4,9 +4,9 @@ from fastapi import APIRouter, Request, status
 from fastapi.params import Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
-from app.common.http_response.doc_reponses import ResponseErrorDoc, ResponseSuccessDoc
+from app.common.http_response.doc_responses import ResponseErrorDoc, ResponseSuccessDoc
 from app.common.http_response.success_response import SuccessCodes, SuccessResponse
-from app.common.http_response.success_result import SuccessResult, success_response_builder
+from app.common.http_response.success_result import SuccessResult
 from app.modules.user.depends import get_user_repository
 from app.modules.user.models import UserRole
 from app.modules.user.repository_interface import UserRepositoryInterface
@@ -72,7 +72,7 @@ async def auth_get_token(
         data=tokens,
     )
 
-    return success_response_builder(result, request)
+    return result.to_json_response(request)
 
 
 @router.post(
@@ -143,7 +143,7 @@ async def auth_get_me(
         status_code=status.HTTP_200_OK,
         data=user,
     )
-    return success_response_builder(result, request)
+    return result.to_json_response(request)
 
 
 @router.post(
@@ -187,7 +187,7 @@ async def auth_refresh_tokens(
         data=tokens,
     )
 
-    return success_response_builder(result, request)
+    return result.to_json_response(request)
 
 
 @router.get(
@@ -228,4 +228,4 @@ async def auth_verify_refresh_token(
         data=user_read,
     )
 
-    return success_response_builder(result, request)
+    return result.to_json_response(request)

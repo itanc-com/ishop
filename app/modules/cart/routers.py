@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Request, status
 
-from app.common.http_response.doc_reponses import ResponseErrorDoc, ResponseSuccessDoc
+from app.common.http_response.doc_responses import ResponseErrorDoc, ResponseSuccessDoc
 from app.common.http_response.success_response import SuccessResponse
 from app.common.http_response.success_result import SuccessCodes, SuccessResult
 from app.modules.product.depends import get_product_repository

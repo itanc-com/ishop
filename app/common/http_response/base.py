@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class BaseResponse(BaseModel):
@@ -16,5 +16,5 @@ class BaseResponse(BaseModel):
 
     status: int
     message: str
-    timestamp: datetime
-    path: str
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(datetime.UTC))
+    path: str = Field(default="/")
