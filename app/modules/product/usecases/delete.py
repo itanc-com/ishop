@@ -19,4 +19,4 @@ class ProductDelete:
                 data={"product_id": product_id}, message=f"Product with ID {product_id} not found."
             )
 
-        return ProductOutRead.model_validate(product, by_name=True)
+        return ProductOutRead.model_validate(product)
