@@ -46,17 +46,13 @@ async def clear_database():
             )
             if sequence_check.fetchone():
                 logger.info("sqlite_sequence table found, resetting auto-increment counters...")
-                # Only reset sequences for tables that exist in sqlite_sequence
+                # Delete sequences for all tables (DELETE succeeds even if row doesn't exist)
                 for table in tables:
                     table_name = table[0]
-                    sequence_exists = await session.execute(
-                        text("SELECT name FROM sqlite_sequence WHERE name=:table_name"), {"table_name": table_name}
+                    await session.execute(
+                        text("DELETE FROM sqlite_sequence WHERE name=:table_name"), {"table_name": table_name}
                     )
-                    if sequence_exists.fetchone():
-                        await session.execute(
-                            text("DELETE FROM sqlite_sequence WHERE name=:table_name"), {"table_name": table_name}
-                        )
-                        logger.info(f"Reset sequence for: {table_name}")
+                    logger.info(f"Reset sequence for: {table_name}")
             else:
                 logger.info("No sqlite_sequence table found, skipping sequence reset")
 
