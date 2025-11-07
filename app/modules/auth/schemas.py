@@ -66,6 +66,7 @@ class JWTPayload(BaseModel):
 class TokenResponse(BaseModel):
     access_token: str
     refresh_token: str
+    token_type: str = "bearer"
     access_token_expire_in: int
     refresh_token_expire_in: int
 
