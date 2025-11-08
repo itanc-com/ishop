@@ -1,21 +1,6 @@
-from enum import IntEnum
-
 from sqlalchemy import Column, DateTime, Integer, String, Text, func
 
 from app.db.base import Base
-
-
-class UserRole(IntEnum):
-    USER = 0
-    ADMIN = 1
-
-
-class UserStatus(IntEnum):
-    DEACTIVE = 0
-    ACTIVE = 1
-    VERIFIED = 2
-    SUSPEND = 3
-    DELETE = 4
 
 
 class User(Base):
@@ -27,8 +12,8 @@ class User(Base):
     email = Column(Text, unique=True, index=True, nullable=False)
     password = Column(Text, nullable=False)
     picture = Column(Text, nullable=True)
-    role = Column(Integer, default=UserRole.USER, nullable=False)
-    status = Column(Integer, default=UserStatus.DEACTIVE, nullable=False)
+    role = Column(Integer, default=2, nullable=False)
+    status = Column(Integer, default=0, nullable=False)
     phone = Column(Text, nullable=True)
     address = Column(Text, nullable=True)
     date_created = Column(DateTime, default=func.now(), nullable=False)

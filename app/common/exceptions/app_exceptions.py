@@ -75,3 +75,10 @@ class InvalidCredentialsException(AppBaseException):
         if data is None:
             data = {}
         super().__init__(code=ErrorCodes.INVALID_CREDENTIALS, message=message, status_code=401, data=data)
+
+
+class ForbiddenAccessException(AppBaseException):
+    def __init__(self, data=None, message: str = "You do not have permission to access this resource"):
+        if data is None:
+            data = {}
+        super().__init__(code=ErrorCodes.FORBIDDEN, message=message, status_code=403, data=data)

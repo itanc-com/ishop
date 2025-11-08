@@ -1,12 +1,21 @@
 import time
 from enum import StrEnum
 
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, Field
 
 
 class TokenType(StrEnum):
     access = "access"
     refresh = "refresh"
+
+
+class UserLoginRequest(BaseModel):
+    """Request schema for user login with email and password."""
+
+    email: EmailStr = Field(..., description="User's email address", example="user@example.com")
+    password: str = Field(
+        ..., min_length=8, description="User's password (minimum 8 characters)", example="password123"
+    )
 
 
 class JWTPayload(BaseModel):

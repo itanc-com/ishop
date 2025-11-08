@@ -1,10 +1,11 @@
+from app.common.enums import UserRole
 from app.common.exceptions.app_exceptions import (
     DatabaseOperationException,
     EntityNotFoundException,
     InvalidCredentialsException,
 )
 from app.modules.auth.schemas import JWTPayload, TokenType
-from app.modules.user.models import User, UserRole
+from app.modules.user.models import User
 from app.modules.user.repository_interface import UserRepositoryInterface
 from app.modules.user.schemas import UserRead
 from app.utils.jwt_auth.jwt_handler import JWThandler

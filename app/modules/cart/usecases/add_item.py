@@ -8,8 +8,7 @@ from app.modules.product.models import Product
 from app.modules.product.repository_interface import ProductRepositoryInterface
 
 from ..models import CartItem
-from ..schemas import CartItemCreate, CartItemRead
-from ..models import CartItem
+from ..schemas import CartItemInCreate, CartItemOutRead
 
 
 class AddItemToCart:
@@ -21,7 +20,7 @@ class AddItemToCart:
         self.cart_item_repository = cart_item_repository
         self.product_repository = product_repository
 
-    async def execute(self, cart_item_create: CartItemCreate) -> CartItemRead | None:
+    async def execute(self, cart_item_create: CartItemInCreate) -> CartItemOutRead | None:
         product: Product | None = await self.product_repository.get_by_id(cart_item_create.product_id)
 
         if not product:
@@ -71,7 +70,7 @@ class AddItemToCart:
                 data={"user_id": cart_item_create.user_id, "product_id": cart_item_create.product_id},
             )
 
-        new_cart_item = CartItemRead(
+        new_cart_item = CartItemOutRead(
             user_id=cart_item.user_id,
             product_id=cart_item.product_id,
             quantity=cart_item.quantity,

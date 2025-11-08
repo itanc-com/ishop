@@ -4,16 +4,16 @@ from fastapi import APIRouter, Request, status
 from fastapi.params import Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
+from app.common.enums import UserRole
 from app.common.http_response.doc_responses import ResponseErrorDoc, ResponseSuccessDoc
 from app.common.http_response.success_response import SuccessCodes, SuccessResponse
 from app.common.http_response.success_result import SuccessResult
 from app.modules.user.depends import get_user_repository
-from app.modules.user.models import UserRole
 from app.modules.user.repository_interface import UserRepositoryInterface
 from app.modules.user.schemas import UserRead
 
 from .depends import get_current_authenticated_user
-from .schemas import JWTPayload, OAuth2TokenResponse, TokenResponse, TokenType
+from .schemas import JWTPayload, OAuth2TokenResponse, TokenResponse, TokenType, UserLoginRequest
 from .usecases.auth_user_by_email_password import AuthenticateUserByEmailPassword
 from .usecases.create_tokens import CreateTokens
 from .usecases.read_jwt_token import ReadJwtToken
@@ -30,7 +30,7 @@ router = APIRouter(
 @router.post(
     "/token",
     description="user authentication and provides access token and refresh token",
-    # response_model=SuccessResponse[dict],
+    response_model=SuccessResponse[TokenResponse],
     status_code=status.HTTP_201_CREATED,
     responses={
         **ResponseSuccessDoc.HTTP_201_CREATED("Token created successfully", TokenResponse),
@@ -41,29 +41,29 @@ router = APIRouter(
     },
 )
 async def auth_get_token(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     request: Request,
+    credentials: UserLoginRequest,
     user_repository: Annotated[UserRepositoryInterface, Depends(get_user_repository)],
 ) -> SuccessResponse[TokenResponse]:
     """
-    Authenticate user and provide access token and refresh token.
+    Authenticate user with email and password and provide access token and refresh token.
 
-    Args:
-        form_data (OAuth2PasswordRequestForm): Form data containing username and password.
-
+    **Request body (JSON):**
+    ```json
+    {
+      "email": "user@example.com",
+      "password": "password123"
+    }
+    ```
     Returns:
-        dict | None: Access token and refresh token if authentication is successful, None otherwise.
+        TokenResponse : Access token and refresh token if authentication is successful, None otherwise.
     """
 
-    email = form_data.username
-    password = form_data.password
+    user = await AuthenticateUserByEmailPassword(user_repository).execute(credentials.email, credentials.password)
 
-    user = await AuthenticateUserByEmailPassword(user_repository).execute(email, password)
+    user_role = UserRole(user.role).name.lower()
 
-    user_role = str(UserRole(user.role).name.lower())
-
-    create_tokens = CreateTokens(user_id=str(user.id), user_role=user_role)
-    tokens = await create_tokens.execute()
+    tokens = await CreateTokens(user_id=str(user.id), user_role=user_role).execute()
 
     result = SuccessResult[TokenResponse](
         code=SuccessCodes.CREATED,
@@ -78,7 +78,6 @@ async def auth_get_token(
 @router.post(
     "/token/swagger",
     response_model=OAuth2TokenResponse,
-    include_in_schema=True,
     summary="OAuth2 Token for Swagger UI",
     description="This endpoint is used to obtain an OAuth2 token for Swagger UI.",
     status_code=status.HTTP_200_OK,
@@ -91,20 +90,32 @@ async def auth_get_token(
     },
 )
 async def auth_swagger_token(
-    form_data: OAuth2PasswordRequestForm = Depends(),
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     user_repo: UserRepositoryInterface = Depends(get_user_repository),
 ):
     """
-    Swagger UI token endpoint.
-    This endpoint is used to obtain an OAuth2 token for Swagger UI.
+    **OAuth2-compliant token endpoint for Swagger UI.**
+
+    Returns tokens in OAuth2 standard format (RFC 6749).
+    This endpoint is specifically for Swagger UI's "Authorize" button.
+
+    **Note:** This endpoint is disabled in production environments.
+
     Args:
         form_data (OAuth2PasswordRequestForm): Form data containing username and password.
         user_repo (UserRepositoryInterface): User repository dependency.
     Returns:
         dict: Access token and token type.
     """
+
+    email = form_data.username
+    password = form_data.password
+
+    print(f"Authenticating user with email: {email}", flush=True)
+    print(f"Password provided: {password}", flush=True)
+
     user = await AuthenticateUserByEmailPassword(user_repo).execute(form_data.username, form_data.password)
-    user_role = str(UserRole(user.role).name.lower())
+    user_role = UserRole(user.role).name.lower()
 
     tokens = await CreateTokens(user_id=str(user.id), user_role=user_role).execute()
 
@@ -114,7 +125,8 @@ async def auth_swagger_token(
 @router.get(
     "/me",
     description="Get current user information",
-    response_model=SuccessResponse[UserRead],
+    # SuccessResponse[UserRead]
+    response_model=None,
     status_code=status.HTTP_200_OK,
     responses={
         **ResponseSuccessDoc.HTTP_200_OK("User retrieved successfully", UserRead),
@@ -137,6 +149,7 @@ async def auth_get_me(
     Returns:
         SuccessResponse[UserRead]: A success response containing the user information.
     """
+
     result = SuccessResult[UserRead](
         code=SuccessCodes.SUCCESS,
         message="User retrieved successfully",
@@ -177,7 +190,7 @@ async def auth_refresh_tokens(
     payload: JWTPayload = await ReadJwtToken(refresh_token).execute()
 
     user = await VerifyTokenPayload(user_repository).execute(payload, TokenType.refresh)
-    user_role = str(UserRole(user.role).name.lower())
+    user_role = UserRole(user.role).name.lower()
 
     tokens = await CreateTokens(user_id=str(user.id), user_role=user_role).execute()
     result = SuccessResult[TokenResponse](

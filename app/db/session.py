@@ -2,7 +2,7 @@ from typing import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.pydantic.settings import settings
+from app.core.config.settings import settings
 
 from .database_session_manager import DatabaseSessionManager
 

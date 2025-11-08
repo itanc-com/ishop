@@ -1,13 +1,13 @@
 from app.modules.cart.repository_interface import CartItemRepositoryInterface
 
-from ..schemas import CartItemRead
+from ..schemas import CartItemOutRead
 
 
 class UpdateCartItemQuantity:
     def __init__(self, cart_item_repository: CartItemRepositoryInterface) -> None:
         self.cart_item_repository = cart_item_repository
 
-    async def execute(self, user_id: int, product_id: int, qty: int) -> CartItemRead | None:
+    async def execute(self, user_id: int, product_id: int, qty: int) -> CartItemOutRead | None:
         """
         This method will update the quantity of a specific cart item for a user.
         When the quantity is updated, it calculates the total price based on the new quantity.

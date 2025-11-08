@@ -1,6 +1,6 @@
 import logging
 
-from app.core.pydantic.settings import EnvironmentType, settings
+from app.core.config.settings import EnvironmentType, settings
 
 
 class CustomFormatter(logging.Formatter):

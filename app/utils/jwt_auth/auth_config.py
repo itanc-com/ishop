@@ -1,4 +1,4 @@
-from app.core.pydantic.settings import settings
+from app.core.config.settings import settings
 
 # should connect to aws secret manager or switch on development environment
 JWT_SECRET_KEY = settings.jwt_secret_key
