@@ -1,4 +1,5 @@
-from app.common.exceptions.app_exceptions import DatabaseOperationException, EntityNotFoundException
+from app.common.exceptions.app_exceptions import InternalServerException, NotFoundException
+from app.common.http_response.error_response import ErrorCodes
 from app.modules.product.models import Product
 from app.modules.product.repository_interface import ProductRepositoryInterface
 from app.modules.product.schemas import ProductOutRead
@@ -12,11 +13,15 @@ class ProductDelete:
         try:
             product: Product | None = await self.product_repository.delete_by_id(product_id)
         except Exception as e:
-            raise DatabaseOperationException(operation="delete", message=str(e), data={"product_id": product_id})
+            raise InternalServerException(
+                code=ErrorCodes.DATABASE_ERROR,
+                message="Failed to delete product",
+                data={"product_id": product_id},
+            ) from e
 
         if not product:
-            raise EntityNotFoundException(
-                data={"product_id": product_id}, message=f"Product with ID {product_id} not found."
+            raise NotFoundException(
+                code=ErrorCodes.ENTITY_NOT_FOUND, data={"product_id": product_id}, message="Product not found."
             )
 
         return ProductOutRead.model_validate(product)

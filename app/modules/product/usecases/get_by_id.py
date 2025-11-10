@@ -1,4 +1,5 @@
-from app.common.exceptions.app_exceptions import DatabaseOperationException, EntityNotFoundException
+from app.common.exceptions.app_exceptions import InternalServerException, NotFoundException
+from app.common.http_response.error_response import ErrorCodes
 from app.modules.product.models import Product
 from app.modules.product.repository_interface import ProductRepositoryInterface
 from app.modules.product.schemas import ProductOutRead
@@ -10,11 +11,13 @@ class ProductGetById:
 
     async def execute(self, product_id: int) -> ProductOutRead:
         try:
-            product: Product = await self.product_repository.get_by_id(product_id)
+            product: Product | None = await self.product_repository.get_by_id(product_id)
         except Exception as e:
-            raise DatabaseOperationException(operation="select", message=str(e), data={"product_id": product_id})
+            raise InternalServerException(
+                code=ErrorCodes.DATABASE_ERROR, message="Failed to retrieve product", data={"product_id": product_id}
+            ) from e
 
         if not product:
-            raise EntityNotFoundException(data={"product_id": product_id}, message="Product not found")
+            raise NotFoundException(data={"product_id": product_id}, message="Product not found")
 
         return ProductOutRead.model_validate(product)

@@ -1,4 +1,6 @@
-from app.common.exceptions.app_exceptions import DatabaseOperationException
+from common.http_response.error_response import ErrorCodes
+
+from app.common.exceptions.app_exceptions import InternalServerException
 from app.common.schemas.pagination import PaginationInfo
 from app.modules.product.models import Product
 from app.modules.product.repository_interface import ProductRepositoryInterface
@@ -22,11 +24,11 @@ class ProductListPaginated:
             )
 
         except Exception as e:
-            raise DatabaseOperationException(
-                operation="select",
-                message=str(e),
+            raise InternalServerException(
+                code=ErrorCodes.DATABASE_ERROR,
+                message="Failed to retrieve products",
                 data={"category_id": category_id, "page": page, "limit": limit},
-            )
+            ) from e
 
         # Calculate pagination info
         total_pages = (total_items + limit - 1) // limit  # Ceiling division
