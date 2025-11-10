@@ -26,6 +26,7 @@ dev-dependencies = [
     "faker>=37.3.0",
     "pytest-order>=1.3.0",
     "playwright>=1.52.0",
+    "pytest-cov>=7.0.0",
 ]
 
 [tool.ruff]
