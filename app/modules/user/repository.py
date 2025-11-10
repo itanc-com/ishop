@@ -37,7 +37,7 @@ class UserRepository(UserRepositoryInterface):
         Returns:
             bool: True if a user with the specified email exists, False otherwise.
         """
-        query = select(1).where(User.email == email).limit(1)
+        query = select(1).where(User.email == email)
         result = await self.session.execute(query)
         return result.scalar_one_or_none() is not None
 

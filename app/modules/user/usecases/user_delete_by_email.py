@@ -1,4 +1,5 @@
-from app.common.exceptions.app_exceptions import DatabaseOperationException, EntityNotFoundException
+from app.common.exceptions.app_exceptions import InternalServerException, NotFoundException
+from app.common.http_response.error_response import ErrorCodes
 from app.modules.user.models import User
 from app.modules.user.repository_interface import UserRepositoryInterface
 from app.modules.user.schemas import UserRead
@@ -14,19 +15,27 @@ class UserDeleteByEmail:
         try:
             get_user: User | None = await self.user_repository.get_by_email(email)
         except Exception as e:
-            raise DatabaseOperationException(operation="select", message=str(e), data={"email": email})
+            raise InternalServerException(
+                code=ErrorCodes.DATABASE_ERROR, message="Failed to retrieve user by email", data={"email": email}
+            ) from e
 
         if not get_user:
-            raise EntityNotFoundException(
-                data={"user_id": get_user.id}, message=f"User with ID {get_user.id} not found."
+            raise NotFoundException(
+                code=ErrorCodes.ENTITY_NOT_FOUND,
+                message="User not found.",
+                data={"email": email},
             )
 
         try:
             user: User | None = await self.user_repository.delete_by_id(get_user.id)
         except Exception as e:
-            raise DatabaseOperationException(operation="delete", message=str(e), data={"user_id": user.id})
+            raise InternalServerException(
+                code=ErrorCodes.DATABASE_ERROR, message="Failed to delete user.", data={"user_id": user.id}
+            ) from e
 
         if not user:
-            raise EntityNotFoundException(data={"user_id": user.id}, message=f"User with ID {user.id} not found.")
+            raise NotFoundException(
+                code=ErrorCodes.ENTITY_NOT_FOUND, message="User not found.", data={"user_id": user.id}
+            )
 
         return UserRead.model_validate(user)
