@@ -1,3 +1,5 @@
+from common.http_response.error_response import ErrorCodes
+
 from app.common.exceptions.app_exceptions import InternalServerException
 from app.modules.product.repository_interface import ProductRepositoryInterface
 
@@ -11,7 +13,7 @@ class ProductSkuExists:
             return await self.product_repository.exists_by_field("sku", sku)
         except Exception as e:
             raise InternalServerException(
-                operation="exists_by_sku",
-                message=str(e),
+                code=ErrorCodes.DATABASE_ERROR,
+                message="Failed to check if product SKU exists",
                 data={"sku": sku},
-            )
+            ) from e
