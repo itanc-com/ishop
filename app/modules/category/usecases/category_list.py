@@ -1,7 +1,7 @@
-from modules.category.models import Category
-
-from app.modules.category.repository_interface import CategoryRepositoryInterface
 from app.modules.category.schemas import CategoryRead
+
+from ..models import Category
+from ..repository_interface import CategoryRepositoryInterface
 
 
 class CategoryList:

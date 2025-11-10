@@ -1,6 +1,9 @@
 from app.common.exceptions.app_exceptions import NotFoundException
-from app.modules.category.repository_interface import CategoryRepositoryInterface
-from app.modules.category.schemas import CategoryRead
+from app.common.http_response.error_response import ErrorCodes
+
+from ..models import Category
+from ..repository_interface import CategoryRepositoryInterface
+from ..schemas import CategoryRead
 
 
 class CategoryGetById:
@@ -8,10 +11,11 @@ class CategoryGetById:
         self.category_repository = category_repository
 
     async def execute(self, category_id: int) -> CategoryRead:
-        category = await self.category_repository.get_by_id(category_id)
+        category: Category | None = await self.category_repository.get_by_id(category_id)
         if category is None:
             raise NotFoundException(
-                data={"category_id": category_id},
+                code=ErrorCodes.ENTITY_NOT_FOUND,
                 message="Category not found",
+                data={"category_id": category_id},
             )
         return CategoryRead.model_validate(category)

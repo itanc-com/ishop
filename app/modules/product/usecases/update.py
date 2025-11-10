@@ -1,8 +1,8 @@
-from common.http_response.error_response import ErrorCodes
-
 from app.common.exceptions.app_exceptions import InternalServerException, NotFoundException
-from app.modules.product.repository_interface import ProductRepositoryInterface
-from app.modules.product.schemas import ProductInUpdate, ProductOutRead
+from app.common.http_response.error_response import ErrorCodes
+
+from ..repository_interface import ProductRepositoryInterface
+from ..schemas import ProductInUpdate, ProductOutRead
 
 
 class ProductUpdate:

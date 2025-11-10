@@ -1,10 +1,10 @@
-from common.http_response.error_response import ErrorCodes
-
 from app.common.exceptions.app_exceptions import InternalServerException
+from app.common.http_response.error_response import ErrorCodes
 from app.common.schemas.pagination import PaginationInfo
-from app.modules.product.models import Product
-from app.modules.product.repository_interface import ProductRepositoryInterface
-from app.modules.product.schemas import ProductOutPaginated, ProductOutRead
+
+from ..models import Product
+from ..repository_interface import ProductRepositoryInterface
+from ..schemas import ProductOutPaginated, ProductOutRead
 
 
 class ProductListPaginated:

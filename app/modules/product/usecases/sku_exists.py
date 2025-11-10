@@ -1,7 +1,7 @@
-from common.http_response.error_response import ErrorCodes
-
 from app.common.exceptions.app_exceptions import InternalServerException
-from app.modules.product.repository_interface import ProductRepositoryInterface
+from app.common.http_response.error_response import ErrorCodes
+
+from ..repository_interface import ProductRepositoryInterface
 
 
 class ProductSkuExists:
