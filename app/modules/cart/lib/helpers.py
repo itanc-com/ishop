@@ -1,9 +1,12 @@
-def merge_cart_items(items: list[dict[str, int]]) -> list[dict[str, int]]:
+from typing import Any
+
+
+def merge_cart_items(items: list[dict[str, int] | Any]) -> list[dict[str, int]]:
     """
     Merge duplicate product items by summing their quantities.
 
     Args:
-        items: List of cart items with product_id and quantity keys.
+        items: List of cart items (dicts or Pydantic models) with product_id and quantity.
 
     Returns:
         List of merged cart items with unique product_ids and summed quantities.
@@ -21,8 +24,9 @@ def merge_cart_items(items: list[dict[str, int]]) -> list[dict[str, int]]:
 
     # accumulate quantities for each product_id
     for item in items:
-        product_id = item["product_id"]
-        quantity = item["quantity"]
+        # Handle both dict and Pydantic models
+        product_id = item["product_id"] if isinstance(item, dict) else item.product_id
+        quantity = item["quantity"] if isinstance(item, dict) else item.quantity
         merged[product_id] = merged.get(product_id, 0) + quantity
 
     return [{"product_id": pid, "quantity": qty} for pid, qty in merged.items()]
