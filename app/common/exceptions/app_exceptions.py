@@ -50,6 +50,34 @@ class InternalServerException(AppBaseException):
         )
 
 
+class BadRequestException(AppBaseException):
+    """
+    Raised when the client sends an invalid request (400 Bad Request).
+
+    Use cases:
+    - Malformed JSON payload
+    - Missing required fields
+    - Invalid query parameters
+    - Data validation errors
+    - Unsupported media types
+    """
+
+    def __init__(
+        self,
+        code: ErrorCodes = ErrorCodes.BAD_REQUEST,
+        message: str = "Bad request",
+        data: dict | None = None,
+    ):
+        if data is None:
+            data = {}
+        super().__init__(
+            code=code,
+            message=message,
+            status_code=400,
+            data=data,
+        )
+
+
 class AuthenticationException(AppBaseException):
     """
     Raised when authentication fails (401 Unauthorized).
