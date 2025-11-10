@@ -1,4 +1,5 @@
-from app.common.exceptions.app_exceptions import InvalidPayloadException
+from app.common.exceptions.app_exceptions import AuthenticationException
+from app.common.http_response.error_response import ErrorCodes
 from app.modules.auth.schemas import JWTPayload, TokenResponse, TokenType
 from app.utils.jwt_auth.auth_config import ACCESS_TOKEN_EXPIRE, JWT_ISSUER_SERVER, REFRESH_TOKEN_EXPIRE
 from app.utils.jwt_auth.jwt_handler import JWThandler
@@ -22,8 +23,10 @@ class CreateTokens:
         try:
             access_token = JWThandler.create_token(pyaload_access_token.model_dump())
         except (ValueError, TypeError) as e:
-            raise InvalidPayloadException(
-                message=f"Failed to create access token, {e}", payload=pyaload_access_token.model_dump()
+            raise AuthenticationException(
+                code=ErrorCodes.INVALID_PAYLOAD,
+                message=f"Failed to create access token, {e}",
+                payload=pyaload_access_token.model_dump(),
             ) from e
 
         # * create refresh-token
@@ -38,8 +41,11 @@ class CreateTokens:
         try:
             refresh_token = JWThandler.create_token(pyaload_refresh_token.model_dump())
         except (ValueError, TypeError) as e:
-            raise InvalidPayloadException(
-                message=f"Failed to create refresh token, {e}", payload=refresh_token.model_dump()
+            raise AuthenticationException(
+                #! avoid user enumeration
+                code=ErrorCodes.INVALID_PAYLOAD,
+                message=f"Failed to create refresh token, {e}",
+                payload=pyaload_refresh_token.model_dump(),
             ) from e
 
         return TokenResponse(

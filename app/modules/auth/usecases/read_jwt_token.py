@@ -1,4 +1,4 @@
-from app.common.exceptions.app_exceptions import InvalidPayloadException
+from app.common.exceptions.app_exceptions import AuthenticationException
 from app.modules.auth.schemas import JWTPayload
 from app.utils.jwt_auth.jwt_handler import JWThandler
 
@@ -18,4 +18,5 @@ class ReadJwtToken:
             payload = JWThandler.read_token(self.token)
             return JWTPayload.model_validate(payload)
         except Exception as e:
-            raise InvalidPayloadException(message=f"Failed to decode  token, {e}", payload=self.token)
+            #! avoid user enumeration
+            raise AuthenticationException(message=f"Failed to decode  token, {e}", payload=self.token)
