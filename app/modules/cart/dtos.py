@@ -1,9 +1,10 @@
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
-class CartItemWithProductDTO(BaseModel):
+# Data from JOIN, aggregation, or transformation (not matching a single table)
+class CartItemDTO(BaseModel):
     """
     Data Transfer Object for cart items with product details.
     Used internally between repository and usecase layers.
@@ -13,19 +14,34 @@ class CartItemWithProductDTO(BaseModel):
     - products: title, sku, price_product
     """
 
-    # Cart item fields (from cart_items)
-    user_id: int = Field(..., description="User ID who owns the cart item")
-    product_id: int = Field(..., description="Product ID in the cart")
-    quantity: int = Field(..., gt=0, description="Quantity of the product")
-    price_cart: float = Field(..., ge=0, description="Price per item when added to cart (from cart_items)")
-    total: float = Field(..., ge=0, description="Total price (price_cart * quantity)")
-    date_created: datetime = Field(..., description="When the cart item was created")
-    date_modified: datetime = Field(..., description="When the cart item was last modified")
-
-    # Product fields (from products via JOIN)
-    title: str = Field(..., description="Product title (current)")
-    sku: str = Field(..., description="Product SKU (current)")
-    price_product: float = Field(..., ge=0, description="Current product price (from products)")
+    user_id: int
+    product_id: int
+    quantity: int
+    price_cart: float  # Only this price
+    subtotal: float
+    date_created: datetime
+    date_modified: datetime
+    title: str
+    sku: str
+    price_product: float
+    is_available: bool = True  # if product is available in catalog
 
     class Config:
         from_attributes = True  # Allows model_validate() from SQLAlchemy objects
+
+
+class CartItemSyncDTO(BaseModel):
+    """
+    Data Transfer Object for cart item synchronization.
+    Used internally between repository and usecase layers.
+    """
+
+    product_id: int
+    title: str
+    sku: str
+    price_product: float
+    is_available: bool = True
+    is_updated: bool = True
+
+    class Config:
+        from_attributes = True

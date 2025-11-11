@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 
-from .dtos import CartItemWithProductDTO
+from .dtos import CartItemDTO
 from .models import CartItem
 
 
-class CartItemRepositoryInterface(ABC):
+class CartRepositoryInterface(ABC):
     @abstractmethod
     async def bulk_insert(self, cart_items: list[CartItem]) -> list[CartItem]:
         """
@@ -32,13 +32,36 @@ class CartItemRepositoryInterface(ABC):
         pass
 
     @abstractmethod
-    async def remove(self, user_id: int, product_id: int) -> None:
+    async def update(self, cart_item: CartItem) -> CartItem:
+        """
+        Update a single cart item in the database.
+
+        Args:
+            cart_item: CartItem object to update
+
+        Returns:
+            The updated CartItem object
+        """
+        pass
+
+    @abstractmethod
+    async def delete(self, user_id: int, product_id: int) -> None:
         """
         Remove a specific cart item for a user and product.
 
         Args:
             user_id: The user ID
             product_id: The product ID
+        """
+        pass
+
+    @abstractmethod
+    async def bulk_update(self, cart_items: list[CartItem]) -> None:
+        """
+        Update multiple cart items in a single database operation.
+
+        Args:
+            cart_items: List of CartItem objects to update
         """
         pass
 
@@ -56,7 +79,7 @@ class CartItemRepositoryInterface(ABC):
         pass
 
     @abstractmethod
-    async def find_all_with_products(self, user_id: int) -> list[CartItemWithProductDTO]:
+    async def find_all_with_products(self, user_id: int) -> list[CartItemDTO]:
         """
         Retrieve all cart items for a specific user with product details.
 
@@ -97,7 +120,7 @@ class CartItemRepositoryInterface(ABC):
         pass
 
     @abstractmethod
-    async def clear_cart(self, user_id: int) -> None:
+    async def delete_all_items(self, user_id: int) -> None:
         """
         Remove all cart items for a specific user.
 

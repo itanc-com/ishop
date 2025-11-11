@@ -3,19 +3,23 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 
 
-# A cart represents a user’s shopping cart,
+# A cart represents a user's shopping cart,
 # with each record linking a user, a product, and the desired quantity.
 class CartItemBase(BaseModel):
-    user_id: int = Field(..., example=1, description="internal id for the user")
-    product_id: int = Field(..., example=123, description="internal id for the product")
-    quantity: int = Field(..., gt=0, example=2, description="Quantity of items")
+    product_id: int = Field(..., json_schema_extra={"examples": [123], "description": "internal id for the product"})
+    quantity: int = Field(..., gt=0, json_schema_extra={"examples": [2], "description": "Quantity of items"})
 
 
 class CartItemOutRead(CartItemBase):
-    title: str = Field(..., example="Super Comfortable Chair", description="Product title")
-    sku: str = Field(..., example="ABC-1234", description="Product SKU (Stock Keeping Unit)")
-    price: float = Field(default=0.0, ge=0, example=99.99, description="Price per item")
-    total: float = Field(default=0.0, ge=0, example=199.98, description="Total price for this item based on quantity")
+    title: str = Field(..., json_schema_extra={"examples": ["Super Comfortable Chair"], "description": "Product title"})
+    sku: str = Field(
+        ..., json_schema_extra={"examples": ["ABC-1234"], "description": "Product SKU (Stock Keeping Unit)"}
+    )
+    price: float = Field(default=0.0, ge=0, examples=[99.99], description="Price per item")
+    subtotal: float = Field(
+        default=0.0, ge=0, examples=[199.98], description="Total price for this item based on quantity"
+    )
+    is_available: bool = Field(default=True, description="Indicates if the product is currently available in stock")
     date_created_gmt: datetime | None = Field(default=None, description="Creation date")
     date_modified_gmt: datetime | None = Field(default=None, description="Last modified date")
 
@@ -37,12 +41,13 @@ class CartInCreate(BaseModel):
     items: list[CartItemInCreate] = Field(..., description="List of cart items to bulk create a new cart")
 
 
-class CartInUpdate(CartItemBase):
+class CartItemInUpdate(BaseModel):
     """
     Used for updating a cart item quantity.
     """
 
-    pass
+    product_id: int = Field(..., json_schema_extra={"examples": [123], "description": "internal id for the product"})
+    quantity: int = Field(..., ge=0, json_schema_extra={"examples": [2], "description": "Quantity of items"})
 
 
 class CartOutRead(BaseModel):
@@ -51,4 +56,5 @@ class CartOutRead(BaseModel):
     It can be used to read cart items.
     """
 
+    total: float = Field(default=0.0, ge=0, examples=[299.98], description="Total price of all items in the cart")
     items: list[CartItemOutRead] = Field(..., description="List of cart items to read")
