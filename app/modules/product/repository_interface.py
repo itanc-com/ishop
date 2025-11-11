@@ -26,6 +26,10 @@ class ProductRepositoryInterface(ABC):
         pass
 
     @abstractmethod
+    async def list_by_ids(self, product_ids: list[int]) -> list[Product]:
+        pass
+
+    @abstractmethod
     async def exists_by_field(self, field: str, value: Any) -> bool:
         pass
 
