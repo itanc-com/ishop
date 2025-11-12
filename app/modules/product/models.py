@@ -7,11 +7,11 @@ from sqlalchemy import (
     Numeric,
     String,
     Text,
-    func,
 )
 from sqlalchemy.orm import relationship
 
 from app.db.base import Base
+from app.utils.date_time import get_current_utc
 
 
 class Product(Base):
@@ -25,7 +25,7 @@ class Product(Base):
     is_available = Column(Boolean, default=False)
     price = Column(Numeric(15, 2), nullable=False)
     is_visible = Column(Boolean, default=False)
-    date_created = Column(DateTime, default=func.now(), nullable=False)
-    date_modified = Column(DateTime, default=func.now(), onupdate=func.now(), nullable=False)
+    date_created = Column(DateTime, default=get_current_utc, nullable=False)
+    date_modified = Column(DateTime, default=get_current_utc, onupdate=get_current_utc, nullable=False)
 
     category = relationship("Category", backref="products")

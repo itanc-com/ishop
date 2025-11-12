@@ -1,6 +1,7 @@
-from sqlalchemy import Column, DateTime, Integer, String, Text, func
+from sqlalchemy import Column, DateTime, Integer, String, Text
 
 from app.db.base import Base
+from app.utils.date_time import get_current_utc
 
 
 class User(Base):
@@ -16,5 +17,5 @@ class User(Base):
     status = Column(Integer, default=0, nullable=False)
     phone = Column(Text, nullable=True)
     address = Column(Text, nullable=True)
-    date_created = Column(DateTime, default=func.now(), nullable=False)
-    date_modified = Column(DateTime, default=func.now(), onupdate=func.now(), nullable=False)
+    date_created = Column(DateTime, default=get_current_utc, nullable=False)
+    date_modified = Column(DateTime, default=get_current_utc, onupdate=get_current_utc, nullable=False)

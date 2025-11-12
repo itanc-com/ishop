@@ -1,6 +1,7 @@
-from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, func
+from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer
 
 from app.db.base import Base
+from app.utils.date_time import get_current_utc
 
 
 class CartItem(Base):
@@ -11,5 +12,5 @@ class CartItem(Base):
     quantity = Column(Integer, default=1, nullable=False)
     price = Column(Float, default=0.0, nullable=False)
     subtotal = Column(Float, default=0.0, nullable=False)
-    date_created = Column(DateTime, default=func.now(), nullable=False)
-    date_modified = Column(DateTime, default=func.now(), onupdate=func.now(), nullable=False)
+    date_created = Column(DateTime, default=get_current_utc, nullable=False)
+    date_modified = Column(DateTime, default=get_current_utc, onupdate=get_current_utc, nullable=False)
