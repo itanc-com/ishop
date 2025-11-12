@@ -58,13 +58,29 @@ class CartRepository(CartRepositoryInterface):
         await self.session.commit()
 
     async def bulk_update(self, cart_items: list[CartItem]) -> None:
-        """
-        Update multiple cart items in a single database operation.
+        if not cart_items:
+            return
 
-        Args:
-            cart_items: List of CartItem objects to update
-        """
-        pass
+        # Convert models to dicts for bulk_update_mappings
+        mappings = [
+            {
+                "user_id": item.user_id,
+                "product_id": item.product_id,
+                "quantity": item.quantity,
+                "price": item.price,
+                "subtotal": item.subtotal,
+                "date_modified": item.date_modified,
+            }
+            for item in cart_items
+        ]
+
+        self.session.bulk_update_mappings(CartItem, mappings)
+        await self.session.commit()
+
+    async def bulk_delete(self, user_id: int, product_ids: list[int]) -> None:
+        stmt = delete(CartItem).where(CartItem.user_id == user_id, CartItem.product_id.in_(product_ids))
+        await self.session.execute(stmt)
+        await self.session.commit()
 
     async def find_all(self, user_id: int) -> list[CartItem]:
         stmt = select(CartItem).where(CartItem.user_id == user_id)
