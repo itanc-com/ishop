@@ -70,18 +70,16 @@ class CartRepositoryInterface(ABC):
         pass
 
     @abstractmethod
-    async def bulk_delete(self, user_id: int, product_ids: list[int]) -> None:
+    async def bulk_delete_except(self, user_id: int, product_ids_to_keep: list[int]) -> None:
         """
-        Delete multiple cart items for a user in a single database operation.
+        Delete all cart items for a user except those with product IDs in product_ids_to_keep.
 
         Args:
             user_id (int): The ID of the user whose cart items will be deleted.
-            product_ids (list[int]): List of product IDs to delete from the user's cart.
+            product_ids_to_keep (list[int]): List of product IDs to keep in the user's cart.
 
         Notes:
-            - Efficiently removes all specified items in one query.
-            - If product_ids is empty, no items will be deleted.
-            - Use for batch removal of items (e.g., cart sync, clear, or update).
+            - If product_ids_to_keep is empty, no items will be deleted.
         """
         pass
 

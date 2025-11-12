@@ -58,10 +58,10 @@ class CartRepository(CartRepositoryInterface):
         await self.session.commit()
 
     async def bulk_update(self, cart_items: list[CartItem]) -> None:
+        """Bulk update cart items using run_sync for compatibility"""
         if not cart_items:
             return
 
-        # Convert models to dicts for bulk_update_mappings
         mappings = [
             {
                 "user_id": item.user_id,
@@ -74,11 +74,15 @@ class CartRepository(CartRepositoryInterface):
             for item in cart_items
         ]
 
-        self.session.bulk_update_mappings(CartItem, mappings)
+        # Run sync method in async context
+        await self.session.run_sync(lambda session: session.bulk_update_mappings(CartItem, mappings))
         await self.session.commit()
 
-    async def bulk_delete(self, user_id: int, product_ids: list[int]) -> None:
-        stmt = delete(CartItem).where(CartItem.user_id == user_id, CartItem.product_id.in_(product_ids))
+    async def bulk_delete_except(self, user_id: int, product_ids_to_keep: list[int]) -> None:
+        """
+        Delete all cart items for a user except those with product IDs in product_ids_to_keep.
+        """
+        stmt = delete(CartItem).where(CartItem.user_id == user_id, ~CartItem.product_id.in_(product_ids_to_keep))
         await self.session.execute(stmt)
         await self.session.commit()
 
@@ -101,6 +105,7 @@ class CartRepository(CartRepositoryInterface):
                 Product.title,
                 Product.sku,
                 Product.price.label("price_product"),
+                Product.is_available,
             )
             .join(Product, CartItem.product_id == Product.id)
             .where(CartItem.user_id == user_id)
@@ -121,6 +126,7 @@ class CartRepository(CartRepositoryInterface):
                 title=row.title,
                 sku=row.sku,
                 price_product=row.price_product,
+                is_available=row.is_available,
             )
             for row in rows
         ]

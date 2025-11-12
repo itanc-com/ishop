@@ -24,7 +24,7 @@ class CartItemDTO(BaseModel):
     title: str
     sku: str
     price_product: float
-    is_available: bool = True  # if product is available in catalog
+    is_available: bool = False  # if product is available in catalog
 
     class Config:
         from_attributes = True  # Allows model_validate() from SQLAlchemy objects

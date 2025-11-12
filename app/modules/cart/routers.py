@@ -215,9 +215,14 @@ async def remove_item(
     status_code=status.HTTP_200_OK,
     summary="Refresh cart with latest product prices and details",
     description="""
-    Updates all cart items to reflect the latest product price, title, and SKU.
-    Returns the updated cart.
+    Refreshes your cart and synchronizes item prices and product details
+    with the latest information from the product catalog. Only available
+    products will be updated; unavailable or removed products will be removed.
     """,
+    responses={
+        **ResponseSuccessDoc.HTTP_200_OK("Cart refreshed successfully", CartOutRead),
+        **ResponseErrorDoc.HTTP_500_INTERNAL_SERVER_ERROR("Failed to refresh cart"),
+    },
 )
 async def refresh_cart(
     request: Request,
