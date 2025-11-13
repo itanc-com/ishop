@@ -2,14 +2,14 @@ from app.common.exceptions.app_exceptions import InternalServerException
 from app.common.http_response.error_response import ErrorCodes
 from app.modules.cart.repository_interface import CartRepositoryInterface
 from app.modules.product.repository_interface import ProductRepositoryInterface
-from app.utils.date_time import get_current_utc
+from app.utils.date_time import get_utc_now
 
 from ..dtos import CartItemDTO
 from ..models import CartItem
 from ..schemas import CartItemOutRead, CartOutRead
 
 
-class RefreshCart:
+class SyncCart:
     def __init__(
         self, cart_repository: CartRepositoryInterface, product_repository: ProductRepositoryInterface
     ) -> None:
@@ -44,7 +44,7 @@ class RefreshCart:
                         price=cart_item.price_product,
                         subtotal=float(cart_item.price_product) * cart_item.quantity,
                         date_created=cart_item.date_created,
-                        date_modified=get_current_utc(),
+                        date_modified=get_utc_now(),
                     )
                 )
 
@@ -60,7 +60,7 @@ class RefreshCart:
                         subtotal=float(cart_item.price_product) * cart_item.quantity,
                         is_available=cart_item.is_available,
                         date_created=cart_item.date_created,
-                        date_modified=get_current_utc(),
+                        date_modified=get_utc_now(),
                     )
                 )
 

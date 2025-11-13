@@ -18,8 +18,8 @@ from .usecases import (
     CartCreateFromBulkItems,
     ClearCart,
     ReadCart,
-    RefreshCart,
     RemoveItemFromCart,
+    SyncCart,
     UpdateCartItemQuantity,
 )
 
@@ -210,33 +210,33 @@ async def remove_item(
 
 
 @router.post(
-    "/{user_id}/refresh",
+    "/{user_id}/sync",
     response_model=SuccessResponse[CartOutRead],
     status_code=status.HTTP_200_OK,
-    summary="Refresh cart with latest product prices and details",
+    summary="Sync cart with latest product prices and details",
     description="""
-    Refreshes your cart and synchronizes item prices and product details
+    Syncs your cart and updates item prices and product details
     with the latest information from the product catalog. Only available
     products will be updated; unavailable or removed products will be removed.
     """,
     responses={
-        **ResponseSuccessDoc.HTTP_200_OK("Cart refreshed successfully", CartOutRead),
-        **ResponseErrorDoc.HTTP_500_INTERNAL_SERVER_ERROR("Failed to refresh cart"),
+        **ResponseSuccessDoc.HTTP_200_OK("Cart synced successfully", CartOutRead),
+        **ResponseErrorDoc.HTTP_500_INTERNAL_SERVER_ERROR("Failed to sync cart"),
     },
 )
-async def refresh_cart(
+async def sync_cart(
     request: Request,
     user_id: Annotated[int, Depends(get_current_user_id)],
     cartitem_repository: Annotated[CartRepositoryInterface, Depends(get_cart_repository)],
     product_repository: Annotated[ProductRepositoryInterface, Depends(get_product_repository)],
 ) -> SuccessResponse[CartOutRead]:
-    refreshed_cart = await RefreshCart(cartitem_repository, product_repository).execute(user_id)
+    synced_cart = await SyncCart(cartitem_repository, product_repository).execute(user_id)
 
     result = SuccessResult[CartOutRead](
         code=SuccessCodes.SUCCESS,
-        message="Cart refreshed with latest product details",
+        message="Cart synced with latest product details",
         status_code=status.HTTP_200_OK,
-        data=refreshed_cart,
+        data=synced_cart,
     )
 
     return result.to_json_response(request=request)
