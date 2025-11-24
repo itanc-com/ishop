@@ -54,6 +54,11 @@ class ProductRepository:
         result = await self.session.execute(query)
         return result.scalars().all()
 
+    async def list_by_ids(self, product_ids: list[int]) -> list[Product]:
+        stmt = select(Product).where(Product.id.in_(product_ids))
+        result = await self.session.execute(stmt)
+        return result.scalars().all()
+
     async def exists_by_field(self, field: str, value: Any) -> bool:
         stmt = select(Product).where(getattr(Product, field) == value)
         result = await self.session.execute(stmt)

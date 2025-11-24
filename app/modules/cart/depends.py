@@ -5,11 +5,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import get_db_session
 
-from .repository import CartItemRepository
-from .repository_interface import CartItemRepositoryInterface
+from .repository import CartRepository
+from .repository_interface import CartRepositoryInterface
 
 
-def get_cartitem_repository(
-    db_session: Annotated[AsyncSession, Depends(get_db_session)]
-) -> CartItemRepositoryInterface:
-    return CartItemRepository(db_session)
+def get_cart_repository(db_session: Annotated[AsyncSession, Depends(get_db_session)]) -> CartRepositoryInterface:
+    return CartRepository(db_session)

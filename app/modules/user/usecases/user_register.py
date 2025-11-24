@@ -1,4 +1,5 @@
-from app.common.exceptions.app_exceptions import DatabaseOperationException, DuplicateEntryException
+from app.common.exceptions.app_exceptions import ConflictException, InternalServerException
+from app.common.http_response.error_response import ErrorCodes
 from app.modules.user.models import User
 from app.modules.user.repository_interface import UserRepositoryInterface
 from app.utils.security.password_context import PasswordContext
@@ -12,7 +13,11 @@ class UserRegister:
 
     async def execute(self, user_create: UserCreate) -> UserRead | None:
         if await self.user_repository.email_exists(user_create.email):
-            raise DuplicateEntryException("email", user_create.email)
+            raise ConflictException(
+                code=ErrorCodes.DUPLICATE_ENTRY,
+                message="Email already exists",
+                data={"email": user_create.email},
+            )
 
         user_data = User(**user_create.model_dump())
         user_data.password = PasswordContext.hash_password(user_create.password)
@@ -20,8 +25,10 @@ class UserRegister:
         try:
             new_user = await self.user_repository.insert(user_data)
         except Exception as e:
-            raise DatabaseOperationException("insert", str(e), data={"user": user_data})
+            raise InternalServerException(
+                code=ErrorCodes.DATABASE_ERROR,
+                message="Failed to register user",
+                data={"email": user_create.email},
+            ) from e
 
-        user_read = UserRead.model_validate(new_user)
-
-        return user_read
+        return UserRead.model_validate(new_user)

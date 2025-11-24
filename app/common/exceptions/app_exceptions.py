@@ -22,56 +22,163 @@ class AppBaseException(Exception):
         )
 
 
-class DatabaseOperationException(AppBaseException):
-    def __init__(self, operation: str | None = None, message: str | None = None, data: dict | None = None):
-        message = f"Failed to perform {operation} operation. {message} "
+class InternalServerException(AppBaseException):
+    """
+    Raised when an unexpected server error occurs (500 Internal Server Error).
 
+    Use cases:
+    - Database connection failures
+    - Unexpected exceptions during request processing
+    - External API failures
+    - File system errors
+    - Configuration errors
+    """
+
+    def __init__(
+        self,
+        code: ErrorCodes = ErrorCodes.INTERNAL_SERVER,
+        message: str = "An internal server error occurred",
+        data: dict | None = None,
+    ):
+        if data is None:
+            data = {}
         super().__init__(
-            code=ErrorCodes.DATABASE_ERROR,
+            code=code,
             message=message,
             status_code=500,
             data=data,
         )
 
 
-class InvalidTokenException(AppBaseException):
-    """Raised when ."""
+class BadRequestException(AppBaseException):
+    """
+    Raised when the client sends an invalid request (400 Bad Request).
 
-    def __init__(self, message="Invalid token", token: str = "No token provided"):
-        super().__init__(code=ErrorCodes.INVALID_TOKEN, message=message, status_code=401, data={"token": token})
+    Use cases:
+    - Malformed JSON payload
+    - Missing required fields
+    - Invalid query parameters
+    - Data validation errors
+    - Unsupported media types
+    """
 
-
-class InvalidPayloadException(AppBaseException):
-    """Raised when ."""
-
-    def __init__(self, message="Invalid payload", payload=None):
-        super().__init__(code=ErrorCodes.INVALID_PAYLOAD, message=message, status_code=401, data={"payload": payload})
-        if payload is None:
-            payload = {1: "No payload provided"}
-
-
-class DuplicateEntryException(AppBaseException):
-    def __init__(self, field: str, value: str):
+    def __init__(
+        self,
+        code: ErrorCodes = ErrorCodes.BAD_REQUEST,
+        message: str = "Bad request",
+        data: dict | None = None,
+    ):
+        if data is None:
+            data = {}
         super().__init__(
-            code=ErrorCodes.DUPLICATE_ENTRY,
-            message=f"{field} '{value}' already exists.",
-            status_code=409,
-            data={field: value},
-        )
-
-
-class EntityNotFoundException(AppBaseException):
-    def __init__(self, data: dict, message: str = "Entity not found"):
-        super().__init__(
-            code=ErrorCodes.ENTITY_NOT_FOUND,
+            code=code,
             message=message,
-            status_code=404,
+            status_code=400,
             data=data,
         )
 
 
-class InvalidCredentialsException(AppBaseException):
-    def __init__(self, data=None, message: str = "Authentication failed"):
+class AuthenticationException(AppBaseException):
+    """
+    Raised when authentication fails (401 Unauthorized).
+
+    Use cases:
+    - Invalid or missing authentication token
+    - Expired token
+    - Invalid credentials (wrong email/password)
+    - Invalid JWT payload
+    - Token signature verification failed
+    """
+
+    def __init__(
+        self,
+        code: ErrorCodes = ErrorCodes.UNAUTHORIZED,
+        message: str = "Authentication fails",
+        data: dict | None = None,
+    ):
         if data is None:
             data = {}
-        super().__init__(code=ErrorCodes.INVALID_CREDENTIALS, message=message, status_code=401, data=data)
+        super().__init__(
+            code=code,
+            message=message,
+            status_code=401,
+            data=data,
+        )
+
+
+class ForbiddenAccessException(AppBaseException):
+    """
+    Raised when user lacks permission to access a resource (403 Forbidden).
+
+    Use cases:
+    - Insufficient role/permissions
+    - Accessing another user's resources
+    - Admin-only endpoints accessed by regular users
+    - Account suspended or disabled
+    """
+
+    def __init__(self, data=None, message: str = "You do not have permission to access this resource"):
+        if data is None:
+            data = {}
+        super().__init__(
+            code=ErrorCodes.FORBIDDEN,
+            message=message,
+            status_code=403,
+            data=data,
+        )
+
+
+class ConflictException(AppBaseException):
+    """
+    Raised when a request conflicts with the current state (409 Conflict).
+
+    Use cases:
+    - Duplicate email during user registration
+    - Duplicate username or phone number
+    - Version conflict (optimistic locking)
+    - Resource state conflict (e.g., canceling already shipped order)
+    - Concurrent modification conflicts
+    """
+
+    def __init__(
+        self,
+        code: ErrorCodes = ErrorCodes.CONFLICT,
+        message: str = "Request conflicts with the current state",
+        data: dict | None = None,
+    ):
+        if data is None:
+            data = {}
+
+        super().__init__(
+            code=code,
+            message=message,
+            status_code=409,
+            data=data,
+        )
+
+
+class NotFoundException(AppBaseException):
+    """
+    Raised when a requested resource is not found (404 Not Found).
+
+    Use cases:
+    - User not found by ID or email
+    - Product not found by ID or SKU
+    - Order not found
+    - Category not found
+    - Cart item not found
+    - Invalid endpoint/route
+    """
+
+    def __init__(
+        self,
+        code: ErrorCodes = ErrorCodes.RESOURCE_NOT_FOUND,
+        message: str = "Resource not found",
+        data: dict | None = None,
+    ):
+        super().__init__(
+            code=code,
+            message=message,
+            status_code=404,
+            data=data,
+        )

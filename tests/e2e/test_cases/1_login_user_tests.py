@@ -3,7 +3,7 @@ from logging import Logger
 import pytest
 from playwright.sync_api import APIRequestContext
 
-from app.modules.user.models import UserStatus
+from app.common.enums.user import UserStatus
 from tests.e2e.data.users import USER_NORMAL
 from tests.e2e.routes_api_v1.auth import post_login
 
@@ -15,6 +15,7 @@ def _test_login_disabled_user(api_request_context: APIRequestContext, registered
     assert user_data["status"] == UserStatus.DEACTIVE
 
     login_data = {"username": USER_NORMAL["email"], "password": USER_NORMAL["password"]}
+
     login_response = post_login(api_request_context, login_data)
 
     logger.info(login_response.json())
@@ -47,10 +48,11 @@ def _test_login_with_wrong_password_fails(api_request_context: APIRequestContext
 
 
 @pytest.mark.order(4)
-def _test_login_with_correct_credentials(api_request_context: APIRequestContext, logger: Logger):
-    login_data = {"username": USER_NORMAL["email"], "password": USER_NORMAL["password"]}
+def test_login_with_correct_credentials(api_request_context: APIRequestContext, logger: Logger):
+    login_data = {"email": USER_NORMAL["email"], "password": USER_NORMAL["password"]}
     response = post_login(api_request_context, login_data)
 
+    # logger.debug(f"login data: {response.json()}")
     assert response.status == 201, f"Expected 201 Created, got {response.status}"
 
     json_data = response.json().get("data", {})

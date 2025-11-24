@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
+from app.core.config.settings import EnvironmentType, settings
 from app.core.fastapi.app_lifespan import lifespan
-from app.core.pydantic.settings import EnvironmentType, settings
 
 app: FastAPI = FastAPI(
     title="IShop API",

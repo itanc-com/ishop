@@ -1,6 +1,8 @@
-from app.common.exceptions.app_exceptions import DatabaseOperationException, EntityNotFoundException
-from app.modules.product.repository_interface import ProductRepositoryInterface
-from app.modules.product.schemas import ProductInUpdate, ProductOutRead
+from app.common.exceptions.app_exceptions import InternalServerException, NotFoundException
+from app.common.http_response.error_response import ErrorCodes
+
+from ..repository_interface import ProductRepositoryInterface
+from ..schemas import ProductInUpdate, ProductOutRead
 
 
 class ProductUpdate:
@@ -11,11 +13,15 @@ class ProductUpdate:
         try:
             product = await self.product_repository.update_by_id(product_id, product_update)
             if not product:
-                raise EntityNotFoundException(
+                raise NotFoundException(
                     data={"product_id": product_id},
                     message="Product not found",
                 )
         except Exception as e:
-            raise DatabaseOperationException(operation="delete", message=str(e), data={"product_id": product_id})
+            raise InternalServerException(
+                code=ErrorCodes.DATABASE_ERROR,
+                message="Failed to update product",
+                data={"product_id": product_id, "product_update": product_update.model_dump()},
+            ) from e
 
         return ProductOutRead.model_validate(product)

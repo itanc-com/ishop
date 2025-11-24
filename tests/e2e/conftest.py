@@ -1,3 +1,5 @@
+"""Pytest configuration and fixture discovery for e2e tests."""
+
 import asyncio
 import logging
 
@@ -7,6 +9,7 @@ pytest_plugins = [
     "tests.e2e.fixtures.fxt_base",
     "tests.e2e.fixtures.users",
     "tests.e2e.fixtures.category",
+    "tests.e2e.fixtures.tokens",
 ]
 
 

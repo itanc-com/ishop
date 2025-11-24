@@ -14,7 +14,7 @@ from tests.e2e.routes_api_v1.users import delete_user_by_id, get_user_by_email
 
 
 # test clean up all user data
-@pytest.mark.order(90)
+@pytest.mark.order(900)
 def test_delete_user_by_email(api_request_context: APIRequestContext, logger: Logger):
     # Clear users
 
