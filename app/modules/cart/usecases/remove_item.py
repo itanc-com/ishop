@@ -20,7 +20,7 @@ class RemoveItemFromCart:
         if not item:
             raise NotFoundException(
                 data={"user_id": user_id, "product_id": product_id},
-                message=f"Item {product_id} for user with Id {user_id} is not found",
+                message="Item is not found",
             )
 
         try:

@@ -3,7 +3,7 @@ SAMPLE_PRODUCT = {
     "title": "Product Title for Testing",
     "description": "This is a sample product used for testing purposes.",
     "sku": "SKU-001",
-    "price": 100_000,
+    "price": 100,
     "is_available": True,
     "is_visible": True,
 }

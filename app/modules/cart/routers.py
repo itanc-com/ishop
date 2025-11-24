@@ -58,7 +58,7 @@ async def cart_bulk_create(
 
 
 @router.get(
-    "/{user_id}",
+    "/",
     response_model=SuccessResponse[CartOutRead],
     status_code=status.HTTP_200_OK,
     responses={
@@ -84,7 +84,7 @@ async def get_cart(
 
 
 @router.delete(
-    "/{user_id}",
+    "/",
     response_model=SuccessResponse[None],
     status_code=status.HTTP_200_OK,
     responses={
@@ -134,8 +134,8 @@ async def add_item(
     return result.to_json_response(request=request)
 
 
-@router.patch(
-    "/{user_id}/items/{product_id}",
+@router.put(
+    "/items/{product_id}",
     response_model=SuccessResponse[CartItemOutRead],
     status_code=status.HTTP_200_OK,
     summary="Update item quantity in cart",
@@ -185,7 +185,7 @@ async def update_item_quantity(
 
 
 @router.delete(
-    "/{user_id}/items/{product_id}",
+    "/items/{product_id}",
     response_model=SuccessResponse[None],
     status_code=status.HTTP_200_OK,
     responses={
@@ -210,7 +210,7 @@ async def remove_item(
 
 
 @router.post(
-    "/{user_id}/sync",
+    "/sync",
     response_model=SuccessResponse[CartOutRead],
     status_code=status.HTTP_200_OK,
     summary="Sync cart with latest product prices and details",

@@ -52,10 +52,10 @@ def test_login_with_correct_credentials(api_request_context: APIRequestContext, 
     login_data = {"email": USER_NORMAL["email"], "password": USER_NORMAL["password"]}
     response = post_login(api_request_context, login_data)
 
-    logger.debug(f"login data: {response.json()}")
+    # logger.debug(f"login data: {response.json()}")
     assert response.status == 201, f"Expected 201 Created, got {response.status}"
 
     json_data = response.json().get("data", {})
-    logger.info(json_data)
+    # logger.info(json_data)
 
     assert "access_token" in json_data, "Login should return an access token"

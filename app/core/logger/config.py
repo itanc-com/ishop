@@ -31,10 +31,20 @@ class CustomFormatter(logging.Formatter):
 def configure_logger():
     logger = logging.getLogger()
 
-    if settings.environment in (EnvironmentType.PRODUCTION, EnvironmentType.STAGING):
+    if settings.environment in (EnvironmentType.PRODUCTION):
+        # warnings ,errors, critical
+        logger.setLevel(logging.WARNING)
+    elif settings.environment == EnvironmentType.STAGING:
+        # info, warnings, and errors
         logger.setLevel(logging.INFO)
-    else:
+    elif settings.environment == EnvironmentType.DEVELOPMENT:
+        # info, warnings,errors,debugs,critical
         logger.setLevel(logging.DEBUG)
+    elif settings.environment in (EnvironmentType.TESTING, EnvironmentType.LOCAL):
+        # errors, critical
+        logger.setLevel(logging.ERROR)
+    else:
+        logger.setLevel(logging.NOTSET)
 
     stream_handler = logging.StreamHandler()
     custom_formatter = CustomFormatter()

@@ -13,7 +13,7 @@ from tests.e2e.routes_api_v1.product import (
 )
 
 
-@pytest.mark.order(30)
+@pytest.mark.order(300)
 def test_create_product_success(api_request_context: APIRequestContext, logger: Logger):
     response = post_product(api_request_context, data=SAMPLE_PRODUCT)
     code = response.json().get("code")
@@ -22,7 +22,7 @@ def test_create_product_success(api_request_context: APIRequestContext, logger: 
     logger.info(response.json().get("message"))
 
 
-@pytest.mark.order(31)
+@pytest.mark.order(301)
 def test_get_product_success(api_request_context: APIRequestContext, logger: Logger):
     response = get_product(api_request_context, product_id=1)
     code = response.json().get("code")
@@ -39,7 +39,7 @@ def test_get_product_success(api_request_context: APIRequestContext, logger: Log
     logger.info(response.json().get("message"))
 
 
-@pytest.mark.order(32)
+@pytest.mark.order(302)
 def test_update_product_success(api_request_context: APIRequestContext, logger: Logger):
     response = update_product(api_request_context, data=UPDATED_SAMPLE_PRODUCT, product_id=1)
     code = response.json().get("code")
@@ -48,7 +48,7 @@ def test_update_product_success(api_request_context: APIRequestContext, logger: 
     logger.info(response.json().get("message"))
 
 
-@pytest.mark.order(33)
+@pytest.mark.order(303)
 def test_delete_product_success(api_request_context: APIRequestContext, logger: Logger):
     response = delete_product(api_request_context, product_id=1)
     code = response.json().get("code")
@@ -57,7 +57,7 @@ def test_delete_product_success(api_request_context: APIRequestContext, logger: 
     logger.info(response.json().get("message"))
 
 
-@pytest.mark.order(34)
+@pytest.mark.order(304)
 def test_get_paginated_list_products(api_request_context: APIRequestContext, logger: Logger):
     # Create all products from LIST_PRODUCT
     for product in LIST_PRODUCT:
