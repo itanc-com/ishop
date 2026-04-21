@@ -19,4 +19,4 @@ class ReadJwtToken:
             return JWTPayload.model_validate(payload)
         except Exception as e:
             #! avoid user enumeration
-            raise AuthenticationException(message=f"Failed to decode  token, {e}", payload=self.token)
+            raise AuthenticationException(message=f"Failed to decode  token, {e}")

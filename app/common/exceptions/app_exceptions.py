@@ -1,14 +1,42 @@
 import datetime
+from typing import Any
 
 from app.common.http_response.error_response import ErrorCodes, ErrorResponse
 
 
 class AppBaseException(Exception):
-    def __init__(self, *, code: ErrorCodes, message: str, status_code: int = 400, data: dict | None = None):
-        self.code = code
-        self.message = message
-        self.status_code = status_code
-        self.data = data or {}
+    """
+    Base exception class for application-specific errors.
+
+    Attributes:
+        code (ErrorCodes): The error code representing the type of exception.
+        message (str): A human-readable message describing the error.
+        status_code (int): HTTP status code associated with the error (default: 400).
+        data (dict | None): Optional additional data relevant to the error.
+
+    Methods:
+        to_response_model(path: str = "") -> ErrorResponse:
+            Converts the exception into an ErrorResponse model, including the error code,
+            message, status code, current UTC timestamp (RFC 3339-compliant), request path,
+            and any additional data.
+    """
+
+    default_error_code: ErrorCodes | None = None
+    default_message: str = "An error occurred"
+    default_status_code: int = 400
+
+    def __init__(
+        self,
+        *,
+        code: ErrorCodes | None = None,
+        message: str | None = None,
+        data: dict[str, Any] | None = None,
+    ):
+        self.code = code or self.default_error_code
+        self.message = message or self.default_message
+        self.status_code = self.default_status_code
+        self.data = data if data is not None else {}
+        super().__init__(self.message)
 
     def to_response_model(self, path: str = "") -> ErrorResponse:
         return ErrorResponse(
@@ -34,48 +62,41 @@ class InternalServerException(AppBaseException):
     - Configuration errors
     """
 
-    def __init__(
-        self,
-        code: ErrorCodes = ErrorCodes.INTERNAL_SERVER,
-        message: str = "An internal server error occurred",
-        data: dict | None = None,
-    ):
-        if data is None:
-            data = {}
-        super().__init__(
-            code=code,
-            message=message,
-            status_code=500,
-            data=data,
-        )
+    default_error_code = ErrorCodes.INTERNAL_SERVER
+    default_message = "An internal server error occurred"
+    default_status_code = 500
+
+
+class ExternalServiceException(AppBaseException):
+    """
+    Exception raised when an external service call fails.
+    This exception is typically used when an operation that relies on an external service,
+    such as an API call, fails due to network issues, service unavailability, or other errors.
+    """
+
+    default_error_code = ErrorCodes.EXTERNAL_SERVICE_ERROR
+    default_message = "An external service error occurred"
+    default_status_code = 502
 
 
 class BadRequestException(AppBaseException):
     """
-    Raised when the client sends an invalid request (400 Bad Request).
+    Exception raised when an invalid payload is encountered.
 
-    Use cases:
-    - Malformed JSON payload
-    - Missing required fields
-    - Invalid query parameters
-    - Data validation errors
-    - Unsupported media types
+    Raised when a request cannot be processed due to a client error.
+    such as when a request body is missing required fields,
+    contains invalid data types, or fails validation checks.
+
+    This includes:
+    - Invalid or expired OAuth tokens
+    - Malformed query parameters or request data
+    - Failed integration with external services due to bad requests
+      (e.g., sending invalid payloads to Google OAuth APIs)
     """
 
-    def __init__(
-        self,
-        code: ErrorCodes = ErrorCodes.BAD_REQUEST,
-        message: str = "Bad request",
-        data: dict | None = None,
-    ):
-        if data is None:
-            data = {}
-        super().__init__(
-            code=code,
-            message=message,
-            status_code=400,
-            data=data,
-        )
+    default_error_code = ErrorCodes.BAD_REQUEST
+    default_message = "Invalid request payload"
+    default_status_code = 400
 
 
 class AuthenticationException(AppBaseException):
@@ -90,20 +111,9 @@ class AuthenticationException(AppBaseException):
     - Token signature verification failed
     """
 
-    def __init__(
-        self,
-        code: ErrorCodes = ErrorCodes.UNAUTHORIZED,
-        message: str = "Authentication fails",
-        data: dict | None = None,
-    ):
-        if data is None:
-            data = {}
-        super().__init__(
-            code=code,
-            message=message,
-            status_code=401,
-            data=data,
-        )
+    default_error_code = ErrorCodes.UNAUTHORIZED
+    default_message = "Authentication failed"
+    default_status_code = 401
 
 
 class ForbiddenAccessException(AppBaseException):
@@ -117,15 +127,21 @@ class ForbiddenAccessException(AppBaseException):
     - Account suspended or disabled
     """
 
-    def __init__(self, data=None, message: str = "You do not have permission to access this resource"):
-        if data is None:
-            data = {}
-        super().__init__(
-            code=ErrorCodes.FORBIDDEN,
-            message=message,
-            status_code=403,
-            data=data,
-        )
+    default_error_code = ErrorCodes.FORBIDDEN
+    default_message = "You do not have permission to access this resource"
+    default_status_code = 403
+
+
+class OperationNotAllowedException(AppBaseException):
+    """
+    Exception raised when an operation is not permitted on a specific entity.
+    This exception is typically used when an action is attempted that is not allowed
+    for a given entity, such as deleting a verified user or modifying a locked resource.
+    """
+
+    default_error_code = ErrorCodes.OPERATION_NOT_ALLOWED
+    default_message = "Operation not allowed"
+    default_status_code = 405
 
 
 class ConflictException(AppBaseException):
@@ -140,21 +156,9 @@ class ConflictException(AppBaseException):
     - Concurrent modification conflicts
     """
 
-    def __init__(
-        self,
-        code: ErrorCodes = ErrorCodes.CONFLICT,
-        message: str = "Request conflicts with the current state",
-        data: dict | None = None,
-    ):
-        if data is None:
-            data = {}
-
-        super().__init__(
-            code=code,
-            message=message,
-            status_code=409,
-            data=data,
-        )
+    default_error_code = ErrorCodes.CONFLICT
+    default_message = "Request conflicts with the current state"
+    default_status_code = 409
 
 
 class NotFoundException(AppBaseException):
@@ -170,15 +174,49 @@ class NotFoundException(AppBaseException):
     - Invalid endpoint/route
     """
 
-    def __init__(
-        self,
-        code: ErrorCodes = ErrorCodes.RESOURCE_NOT_FOUND,
-        message: str = "Resource not found",
-        data: dict | None = None,
-    ):
-        super().__init__(
-            code=code,
-            message=message,
-            status_code=404,
-            data=data,
+    default_error_code = ErrorCodes.RESOURCE_NOT_FOUND
+    default_message = "Resource not found"
+    default_status_code = 404
+
+
+class MediaValidationException(AppBaseException):
+    """
+    Raised when media content (images, videos, etc.) fails validation or cannot be processed.
+    This exception is typically used when media does not meet the required format, size, or other validation criteria.
+
+    Examples:
+        - File is not a valid media type
+        - Media dimensions or duration are too large/small
+        - File size exceeds the allowed maximum
+        - Unsupported media format
+    """
+
+    default_error_code = ErrorCodes.INVALID_MEDIA
+    default_message = "The media content cannot be processed due to validation failure."
+    default_status_code = 415
+
+
+class BusinessLogicException(AppBaseException):
+    """
+    Raised when an operation violates business rules or domain constraints.
+
+    Use cases:
+    - Attempting to delete a vendor with active listings
+    - Trying to withdraw funds below minimum balance
+    - Booking overlapping time slots
+    - Exceeding allowed quota or limits
+    - State transition violations (e.g., canceling a completed order)
+
+    Note: Use ValidationException for input format/type errors.
+          Use this for valid input that violates business rules.
+
+    Examples:
+        raise BusinessLogicException(
+            message="Cannot delete vendor with active listings",
+            data={"vendor_id": 123, "active_listings": 5}
         )
+    """
+
+    default_error_code = ErrorCodes.BUSINESS_RULE_VIOLATION
+    default_message = "Business rule violation"
+    default_status_code = 422

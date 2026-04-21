@@ -31,7 +31,7 @@ async def get_current_authenticated_user(
     user_id = payload.sub
     user: User | None = await user_repository.get_by_id(user_id)
     if not user:
-        raise NotFoundException(code=ErrorCodes.NOT_FOUND, message="User not found", data={"user_id": user_id})
+        raise NotFoundException(code=ErrorCodes.ENTITY_NOT_FOUND, message="User not found", data={"user_id": user_id})
 
     return UserRead.model_validate(user)
 
