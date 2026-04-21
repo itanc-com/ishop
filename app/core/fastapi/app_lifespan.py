@@ -13,7 +13,7 @@ async def lifespan(app: FastAPI):
     set_app_state(app, AppStates.APP_START_TIME, datetime.now(timezone.utc).replace(microsecond=0))
 
     # Startup
-    async with sessionmanager.connect() as conn:
+    async with sessionmanager.connect() as conn, conn.begin():
         await conn.run_sync(Base.metadata.create_all)
 
     yield  # App runs between this and the end
