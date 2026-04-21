@@ -16,7 +16,7 @@ class ProductCreate:
         # Check for duplicate SKU before insert
         if await self.sku_exists_uc.execute(product_create.sku):
             raise ConflictException(
-                code=ErrorCodes.ENTITY_ALREADY_EXISTS,
+                code=ErrorCodes.DUPLICATE_ENTRY,
                 message="Product with the same SKU already exists",
                 data={"sku": product_create.sku},
             )

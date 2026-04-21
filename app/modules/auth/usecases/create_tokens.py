@@ -26,7 +26,6 @@ class CreateTokens:
             raise AuthenticationException(
                 code=ErrorCodes.INVALID_PAYLOAD,
                 message=f"Failed to create access token, {e}",
-                payload=pyaload_access_token.model_dump(),
             ) from e
 
         # * create refresh-token
@@ -45,7 +44,6 @@ class CreateTokens:
                 #! avoid user enumeration
                 code=ErrorCodes.INVALID_PAYLOAD,
                 message=f"Failed to create refresh token, {e}",
-                payload=pyaload_refresh_token.model_dump(),
             ) from e
 
         return TokenResponse(
