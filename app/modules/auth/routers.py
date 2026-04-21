@@ -82,7 +82,7 @@ async def auth_get_token(
     description="This endpoint is used to obtain an OAuth2 token for Swagger UI.",
     status_code=status.HTTP_200_OK,
     responses={
-        **ResponseSuccessDoc.HTTP_200_OK("Token retrieved successfully", OAuth2TokenResponse),
+        200: {"model": OAuth2TokenResponse, "description": "OAuth2 token retrieved successfully"},
         **ResponseErrorDoc.HTTP_500_INTERNAL_SERVER_ERROR("Operation Failure"),
         **ResponseErrorDoc.HTTP_404_NOT_FOUND("Entity not found"),
         **ResponseErrorDoc.HTTP_403_FORBIDDEN("UNACCESSIBLE"),
@@ -125,8 +125,7 @@ async def auth_swagger_token(
 @router.get(
     "/me",
     description="Get current user information",
-    # SuccessResponse[UserRead]
-    response_model=None,
+    response_model=SuccessResponse[UserRead],
     status_code=status.HTTP_200_OK,
     responses={
         **ResponseSuccessDoc.HTTP_200_OK("User retrieved successfully", UserRead),
@@ -194,9 +193,9 @@ async def auth_refresh_tokens(
 
     tokens = await CreateTokens(user_id=str(user.id), user_role=user_role).execute()
     result = SuccessResult[TokenResponse](
-        code=SuccessCodes.CREATED,
-        message="Tokens created successfully",
-        status_code=status.HTTP_201_CREATED,
+        code=SuccessCodes.SUCCESS,
+        message="Tokens refreshed successfully",
+        status_code=status.HTTP_200_OK,
         data=tokens,
     )
 
@@ -206,9 +205,9 @@ async def auth_refresh_tokens(
 @router.get(
     "/token/verify",
     description="Verify access token",
-    response_model=SuccessResponse[TokenResponse],
+    response_model=SuccessResponse[UserRead],
     responses={
-        **ResponseSuccessDoc.HTTP_200_OK("access token verified successfully", TokenResponse),
+        **ResponseSuccessDoc.HTTP_200_OK("access token verified successfully", UserRead),
         **ResponseErrorDoc.HTTP_500_INTERNAL_SERVER_ERROR("Operation Failure"),
         **ResponseErrorDoc.HTTP_404_NOT_FOUND("Entity not found"),
         **ResponseErrorDoc.HTTP_403_FORBIDDEN("UNACCESSIBLE"),
@@ -219,7 +218,7 @@ async def auth_verify_refresh_token(
     request: Request,
     access_token: str,
     user_repository: Annotated[UserRepositoryInterface, Depends(get_user_repository)],
-) -> SuccessResponse[TokenResponse]:
+) -> SuccessResponse[UserRead]:
     """
     Verify access token.
     This endpoint allows the user to verify their access token.
@@ -228,7 +227,7 @@ async def auth_verify_refresh_token(
         user (UserRead): The authenticated user object.
         user_repository (UserRepositoryInterface): User repository dependency.
     Returns:
-        SuccessResponse[TokenResponse]: A success response containing the verified tokens.
+        SuccessResponse[UserRead]: A success response containing the verified user.
     """
     payload: JWTPayload = await ReadJwtToken(access_token).execute()
 

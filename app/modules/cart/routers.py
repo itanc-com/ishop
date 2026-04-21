@@ -109,10 +109,10 @@ async def clear_cart(
 
 @router.post(
     "/items",
-    response_model=SuccessResponse[CartOutRead],
+    response_model=SuccessResponse[CartItemOutRead],
     status_code=status.HTTP_201_CREATED,
     responses={
-        **ResponseSuccessDoc.HTTP_201_CREATED("Item added to cart", CartOutRead),
+        **ResponseSuccessDoc.HTTP_201_CREATED("Item added to cart", CartItemOutRead),
         **ResponseErrorDoc.HTTP_409_CONFLICT("Item already in cart"),
     },
 )
@@ -189,7 +189,7 @@ async def update_item_quantity(
     response_model=SuccessResponse[None],
     status_code=status.HTTP_200_OK,
     responses={
-        **ResponseSuccessDoc.HTTP_200_OK("Item removed from cart", CartItemOutRead),
+        **ResponseSuccessDoc.HTTP_200_OK("Item removed from cart", None),
         **ResponseErrorDoc.HTTP_404_NOT_FOUND("Item not found in cart"),
     },
 )

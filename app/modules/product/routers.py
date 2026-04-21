@@ -24,6 +24,7 @@ router = APIRouter(
 
 @router.post(
     "/",
+    response_model=SuccessResponse[ProductOutRead],
     status_code=status.HTTP_201_CREATED,
     responses={
         **ResponseSuccessDoc.HTTP_201_CREATED("Product created successfully", ProductOutRead),
@@ -47,7 +48,16 @@ async def create_product(
     return result.to_json_response(request)
 
 
-@router.get("/{product_id}", response_model=ProductOutRead)
+@router.get(
+    "/{product_id}",
+    response_model=SuccessResponse[ProductOutRead],
+    status_code=status.HTTP_200_OK,
+    responses={
+        **ResponseSuccessDoc.HTTP_200_OK("Product fetched successfully", ProductOutRead),
+        **ResponseErrorDoc.HTTP_404_NOT_FOUND("Product not found"),
+        **ResponseErrorDoc.HTTP_500_INTERNAL_SERVER_ERROR("Internal server error"),
+    },
+)
 async def get_product(
     request: Request,
     product_id: int,
@@ -64,7 +74,16 @@ async def get_product(
     return result.to_json_response(request)
 
 
-@router.put("/{product_id}", response_model=ProductOutRead)
+@router.put(
+    "/{product_id}",
+    response_model=SuccessResponse[ProductOutRead],
+    status_code=status.HTTP_200_OK,
+    responses={
+        **ResponseSuccessDoc.HTTP_200_OK("Product updated successfully", ProductOutRead),
+        **ResponseErrorDoc.HTTP_404_NOT_FOUND("Product not found"),
+        **ResponseErrorDoc.HTTP_500_INTERNAL_SERVER_ERROR("Internal server error"),
+    },
+)
 async def update_product(
     request: Request,
     product_id: int,
@@ -85,6 +104,7 @@ async def update_product(
 
 @router.delete(
     "/{product_id}",
+    response_model=SuccessResponse[ProductOutRead],
     status_code=status.HTTP_200_OK,
     responses={
         **ResponseSuccessDoc.HTTP_200_OK("Product deleted successfully", ProductOutRead),

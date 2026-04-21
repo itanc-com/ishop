@@ -118,7 +118,7 @@ async def user_delete(
     request: Request,
     user_id: int,
     user_repository: Annotated[UserRepositoryInterface, Depends(get_user_repository)],
-) -> SuccessResult[UserRead]:
+) -> SuccessResponse[UserRead]:
     user_read = await UserDeleteById(user_repository).execute(user_id)
 
     result = SuccessResult[UserRead](
@@ -145,7 +145,7 @@ async def user_delete_by_email(
     request: Request,
     user_email: str,
     user_repository: Annotated[UserRepositoryInterface, Depends(get_user_repository)],
-) -> SuccessResult[UserRead]:
+) -> SuccessResponse[UserRead]:
     user_read = await UserDeleteByEmail(user_repository).execute(user_email)
 
     result = SuccessResult[UserRead](
